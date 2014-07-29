@@ -37,18 +37,23 @@ void __declspec(naked) enableConsoleHookStub()
 
 void __declspec(naked) gameInitHookStub()
 {
+	// create console
 	__asm
 	{
-	    ; creates console and runs patches
 		mov eax, 57A730h
 		call eax
-		call PatchIW3
-		
-		; go back to our function
+	}
+
+	// run patches
+	__asm call PatchIW3
+
+	// go back to the original function
+	__asm
+	{
 		mov eax, 55E676h
 		push ecx
 		push ebx
-		mov ebx, dword ptr [esp+8+4]
+		mov ebx, dword ptr [esp + 8 + 4]
 		jmp eax
 	}
 }
@@ -68,11 +73,13 @@ void Sys_RunInit()
 
 	// always enable system console, not just if generating reflection probes
 	//memset((void*)0x4FF21C, 0x90, 5);
-	enableConsoleHook.initialize(enableConsoleHookLoc, enableConsoleHookStub);
-	enableConsoleHook.installHook();
+
+	// disabled as it's already in gameInitHookStub
+	//enableConsoleHook.initialize(enableConsoleHookLoc, enableConsoleHookStub);
+	//enableConsoleHook.installHook();
 
 	// hooks our stuff in there (by RrrHaa)
-	*(BYTE*)0x55E670 = 0xE9; //push to jmp
+	*(BYTE*)0x55E670 = 0xE9;
 	*(DWORD*)0x55E671 = (DWORD)gameInitHookStub - 0x55E670 - 5;
 	*(BYTE*)0x55E675 = 0x00;
 }
@@ -91,7 +98,7 @@ void PatchIW3_VA();
 
 void UI_AddString(const char* str, const char* replc);
 
-void CL_Wat_f()
+void CL_Test_f()
 {
 	Com_Printf(0, "watHandler says hi.");
 }
@@ -103,10 +110,8 @@ void PatchIW3()
 		TerminateProcess(GetCurrentProcess(), 0);
 	}
 
-	//Com_Error(1, "Watwatwat\n");
-
-	static cmd_function_t watCmd;
-	//Cmd_AddCommand("wat", CL_Wat_f, &watCmd, 0);
+	static cmd_function_t testCmd;
+	//Cmd_AddCommand("testCommand", CL_TestCommand_f, &testCmd, 0);
 	
 	// remove improper quit message
 	*(WORD*)0x577415 = 0xEB50;
