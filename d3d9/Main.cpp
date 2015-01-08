@@ -75,9 +75,13 @@ void Main_SetSafeInit()
 	}
 }
 
-void RemoveSteamHook()
+void DetectD3DX9_34()
 {
-	remove((GetCurrentDir() + "\\d3dx9_34.dll").c_str());
+	if (FileExists("d3dx9_34.dll"))
+	{
+		MessageBoxA(NULL, "Delete d3dx9_34.dll from your game folder.", "Fatal Error", MB_OK | MB_ICONSTOP);
+		TerminateProcess(GetCurrentProcess(), 0);
+	}
 }
 
 bool __stdcall DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
@@ -85,9 +89,8 @@ bool __stdcall DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 	switch (dwReason)
 	{
 		case DLL_PROCESS_ATTACH:
-			RemoveSteamHook();
+			DetectD3DX9_34();
 			Main_SetSafeInit();
-
 			break;
 
 		case DLL_PROCESS_DETACH:
