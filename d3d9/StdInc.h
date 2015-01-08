@@ -2,8 +2,8 @@
 
 #include "buildnumber.h"
 
-#define VERSION "1.0-" BUILDNUMBER_STR
-#define VERSIONSTRING "LN " VERSION
+#define VERSION BUILDNUMBER_STR
+#define VERSIONSTRING "LN r" VERSION
 
 #define DPMASTER "fluxy.triobit.net"
 #define NP_SERVER "fluxy.triobit.net"
@@ -11,11 +11,15 @@
 
 #define FS_BASEGAME "lightning"
 
+#define NP_DISABLED
 #define KEY_DISABLED
 
 //#define MESS_WITH_CONNECT_MENU
 
 // ---------------------------------------------------------
+#undef _UNICODE
+#undef UNICODE
+
 #define _CRT_SECURE_NO_WARNINGS
 #define _USING_V110_SDK71_
 
@@ -26,7 +30,6 @@
 #include <windows.h>
 #undef CreateRemoteThread
 #undef ReadDirectoryChangesW
-
 // Direct3D
 #include "d3d9.h"
 #include "myIDirect3D9.h"
@@ -39,13 +42,15 @@
 #endif
 
 // C/C++ headers
+#define _DEBUG 1
+#define _CRTDBG_MAP_ALLOC 1
+
+#include <stdint.h>
 #include <stdlib.h>
 #include <crtdbg.h>
-//#include <stdint.h>
 
 #define _SCL_SECURE_NO_WARNINGS
 
-// C/C++ headers
 #include <map>
 #include <vector>
 #include <string>

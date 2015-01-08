@@ -184,10 +184,13 @@ UpgradeLog*.htm
 # Microsoft Fakes
 FakesAssemblies/
 
-# gitrev
-lastrev.txt
-buildnumber.h
+*.csproj
+*.vcxproj
+*.sln
+*.filters
 
-clientdll/Normal/
-clientdll/d3d9/Normal/
-*.tlog
+# gitrev
+buildnumber.h
+lastrev.txt
+
+premake5.exe

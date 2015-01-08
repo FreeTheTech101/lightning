@@ -85,12 +85,6 @@ bool __stdcall DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 	switch (dwReason)
 	{
 		case DLL_PROCESS_ATTACH:
-			/* if (FileExists("d3dx9_34.dll"))
-			{ // TODO: clean up
-				MessageBoxA(0, "Delete d3dx9_34.dll from your game folder", "Error", MB_OK | MB_ICONERROR);
-				TerminateProcess(GetCurrentProcess(), 0);
-			} */
-
 			RemoveSteamHook();
 			Main_SetSafeInit();
 

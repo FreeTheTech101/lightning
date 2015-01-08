@@ -14,6 +14,7 @@
 
 #include "StdInc.h"
 
+#ifndef NP_DISABLED
 #define CURL_STATICLIB
 #include <curl/curl.h>
 #include <curl/types.h>
@@ -151,3 +152,4 @@ bool NP_Initialize()
 
 	return true;
 }
+#endif

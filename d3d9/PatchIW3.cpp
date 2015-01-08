@@ -65,7 +65,9 @@ void Sys_RunInit()
 
 	if (!GAME_FLAG(GAME_FLAG_DEDICATED))
 	{
+#ifndef NP_DISABLED
 		Auth_VerifyIdentity();
+#endif
 	}
 
 	// don't show splash screen
@@ -105,10 +107,12 @@ void CL_Test_f()
 
 void PatchIW3()
 {
+#ifndef NP_DISABLED
 	if (!NP_Initialize())
 	{
 		TerminateProcess(GetCurrentProcess(), 0);
 	}
+#endif
 
 	static cmd_function_t testCmd;
 	//Cmd_AddCommand("testCommand", CL_TestCommand_f, &testCmd, 0);
@@ -157,14 +161,14 @@ void PatchIW3()
 	}
 
 	// UI localized strings
-	UI_AddString("MENU_JOIN_GAME", "Server Browser");
-	UI_AddString("MENU_JOIN_SERVER_CAP", "SERVER BROWSER");
-	UI_AddString("MENU_START_NEW_SERVER", "Private Match");
+	//UI_AddString("MENU_JOIN_GAME", "Server Browser");
+	//UI_AddString("MENU_JOIN_SERVER_CAP", "SERVER BROWSER");
+	//UI_AddString("MENU_START_NEW_SERVER", "Private Match");
 
 	PatchIW3_Hello();
 	PatchIW3_Dvars();
 	PatchIW3_Branding();
-	PatchIW3_LocalizedStrings();
+	//PatchIW3_LocalizedStrings();
 	PatchIW3_VA();
 }
 
