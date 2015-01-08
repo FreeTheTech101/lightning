@@ -33,7 +33,7 @@ ULONG    __stdcall myIDirect3D9::AddRef(void)
 
 ULONG    __stdcall myIDirect3D9::Release(void)
 {
-    extern myIDirect3D9* gl_pmyIDirect3D9;
+    extern myIDirect3D9* g_d3d9;
 
 	// call original routine
 	ULONG count = m_pIDirect3D9->Release();
@@ -42,7 +42,7 @@ ULONG    __stdcall myIDirect3D9::Release(void)
 	// so do we here
 	if (count == 0) 
 	{
-		gl_pmyIDirect3D9 = NULL;
+		g_d3d9 = NULL;
   	    delete(this); 
 	}
 
