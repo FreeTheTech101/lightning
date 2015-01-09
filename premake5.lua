@@ -1,4 +1,4 @@
-solution "lightning"
+solution "iw3cli"
 	configurations { "Debug", "Release" }
 	
 	flags { "StaticRuntime", "No64BitChecks", "Symbols", "Unicode" }
