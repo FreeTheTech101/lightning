@@ -49,3 +49,15 @@ solution "lightning"
 			"call \"$(SolutionDir)\\deps\\tools\\gitrev.cmd\"",
 			"popd"
 		}
+
+	project "InfinityScript"
+		targetname "InfinityScript"
+		language "C#"
+		kind "SharedLib"
+
+		files
+		{
+			"InfinityScript/**.cs"
+		}
+
+		links { "System", "System.Core", "System.Data", "System.Xml", "Microsoft.CSharp" }
