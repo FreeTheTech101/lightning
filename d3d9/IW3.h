@@ -156,11 +156,6 @@ typedef struct dvar_t
 	dvar_maxmin_t max; //68:72 woooo
 } dvar_t;
 
-typedef struct cmd_function_s
-{
-	char pad[24];
-} cmd_function_t;
-
 // material stuff
 struct GfxImage
 {
@@ -184,12 +179,12 @@ struct GfxImage
 
 struct MaterialTextureDef
 {
-        unsigned int typeHash; // asset hash of type
-        char firstCharacter; // first character of image name
-        char secondLastCharacter; // second-last character of image name (maybe only in CoD4?!)
-        unsigned char unknown; // maybe 0xE2
-        char unknown2; // likely 0x00
-        GfxImage* image; // GfxImage* actually
+    unsigned int typeHash; // asset hash of type
+    char firstCharacter; // first character of image name
+    char secondLastCharacter; // second-last character of image name (maybe only in CoD4?!)
+    unsigned char unknown; // maybe 0xE2
+    char unknown2; // likely 0x00
+    GfxImage* image; // GfxImage* actually
 };
 
 struct VertexDecl
@@ -805,6 +800,18 @@ typedef struct
         scriptType_e type;
 } VariableValue;
 
+// types
+typedef void (__cdecl * CommandCB_t)(void);
+
+typedef struct cmd_function_s
+{
+    cmd_function_s *next;
+    const char *name;
+    const char *autoCompleteDir;
+    const char *autoCompleteExt;
+    CommandCB_t function;
+} cmd_function_t;
+
 // original functions
 typedef void (__cdecl * Com_Error_t)(int type, const char* message, ...);
 extern Com_Error_t Com_Error;
@@ -812,20 +819,14 @@ extern Com_Error_t Com_Error;
 typedef void (__cdecl *Com_Printf_t)(int, const char*, ...);
 extern Com_Printf_t Com_Printf;
 
-typedef void (__cdecl * xcommand_t)(void);
-typedef void (__cdecl * Cmd_AddCommand_t)(const char* cmd, xcommand_t callback, cmd_function_t* data, char);
-extern Cmd_AddCommand_t Cmd_AddCommand;
-
-typedef void (__cdecl * Cmd_AddServerCommand_t)(const char* cmd, xcommand_t callback, cmd_function_t* data);
-extern Cmd_AddServerCommand_t Cmd_AddServerCommand;
-
 typedef void (__cdecl * Com_PrintError_t)(int, const char*, ...);
 extern Com_PrintError_t Com_PrintError;
 
+typedef void (__cdecl * Cmd_AddServerCommand_t)(const char* cmdName, CommandCB_t callback, cmd_function_t* data);
+extern Cmd_AddServerCommand_t Cmd_AddServerCommand;
 
 typedef void* (__cdecl * DB_FindXAssetHeader_t)(int type, const char* filename);
 extern DB_FindXAssetHeader_t DB_FindXAssetHeader;
-
 
 typedef dvar_t* (__cdecl * Dvar_RegisterBool_t)(const char* name, bool default, int flags, const char* description);
 extern Dvar_RegisterBool_t Dvar_RegisterBool;
@@ -864,3 +865,5 @@ void NET_OutOfBandPrint(int type, netadr_t adr, const char* message, ...);
 extern int* svs_numclients;
 
 char* GetStringConvar(char* key);
+
+void Cmd_AddCommand(const char *name, CommandCB_t function);

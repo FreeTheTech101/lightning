@@ -2,8 +2,9 @@
 
 Com_Error_t Com_Error = (Com_Error_t)0x4FD330;
 Com_Printf_t Com_Printf = (Com_Printf_t)0x4FCBC0;
-Cmd_AddCommand_t Cmd_AddCommand = (Cmd_AddCommand_t)0x4F9950;
+
 Cmd_AddServerCommand_t Cmd_AddServerCommand = (Cmd_AddServerCommand_t)0x4F9140;
+
 Com_PrintError_t Com_PrintError = (Com_PrintError_t)0x4FCC80;
 
 
@@ -70,4 +71,27 @@ char* GetStringConvar(char* key) {
     if (!var) return "";
 
     return var->current.string;
+}
+
+cmd_function_t** cmd_functions = (cmd_function_t**)0x1410B3C;
+
+void Cmd_AddCommand(const char *name, CommandCB_t function)
+{
+	// check if the command is already defined by
+	// asking calling the original Cmd_AddCommand with the name argument
+	if (((cmd_function_t*(*)(const char*))0x4F9950)(name))
+	{
+		if (function != NULL)
+		{
+			Com_Printf(16, "Cmd_AddCommand: %s already defined\n", name);
+		}
+
+		return;
+	}
+
+	cmd_function_t *cmd = (cmd_function_t*)malloc(sizeof(struct cmd_function_s));
+	cmd->name = name;
+	cmd->function = function;
+	cmd->next = *cmd_functions;
+	*cmd_functions = cmd;
 }

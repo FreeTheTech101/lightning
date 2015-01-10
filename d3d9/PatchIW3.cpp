@@ -102,7 +102,7 @@ void UI_AddString(const char* str, const char* replc);
 
 void CL_Test_f()
 {
-	Com_Printf(0, "watHandler says hi.");
+	Com_Printf(0, "[testCommand] hello!\n");
 }
 
 void PatchIW3()
@@ -115,8 +115,9 @@ void PatchIW3()
 #endif
 
 	static cmd_function_t testCmd;
-	//Cmd_AddCommand("testCommand", CL_TestCommand_f, &testCmd, 0);
-	
+	Cmd_AddCommand("testCommand", CL_Test_f);
+	//Cmd_AddServerCommand("testCommand", CL_Test_f, &testCmd);
+
 	// remove improper quit message
 	*(WORD*)0x577415 = 0xEB50;
 
@@ -188,12 +189,14 @@ void HelloIW(int type)
 void __declspec(naked) HelloHookStub()
 {
     HelloIW(0);
+
     __asm retn
 }
 
 void __declspec(naked) HelloHook2Stub()
 {
     HelloIW(16);
+
     __asm jmp helloHook2.pOriginal
 }
 #pragma optimize("", on)
