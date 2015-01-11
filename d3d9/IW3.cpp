@@ -97,3 +97,15 @@ void Cmd_AddCommand(const char *name, CommandCB_t function)
 	cmd->next = *cmd_functions;
 	*cmd_functions = cmd;
 }
+
+void CG_GameMessage(char* text)
+{
+	__asm
+	{
+		push text
+		push 0
+		mov esi, 43DDA0h
+		call esi
+		add esp, 8
+	}
+}

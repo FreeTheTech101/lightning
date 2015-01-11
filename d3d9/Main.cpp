@@ -84,6 +84,143 @@ void DetectD3DX9_34()
 	}
 }
 
+#include "math.h"
+
+#define CreateThreadArg(func, arg) CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)func, (LPVOID)arg, NULL, NULL);
+#define CreateThreadMin(func) CreateThreadArg(func, NULL);
+
+#define sprintf sprintf_s
+
+#define	GENTITYNUM_BITS			10
+#define	MAX_GENTITIES			(1 << GENTITYNUM_BITS)
+
+#define	ENTITYNUM_NONE			(MAX_GENTITIES - 1)
+
+#define CG_SetNextSnap			0x44D860
+
+typedef float vec_t;
+typedef vec_t vec2_t[2];
+typedef vec_t vec3_t[3];
+
+typedef struct {
+	char unused_1[28];
+	vec3_t origin;
+	char unused_2[72];
+	int groundEntityNum;
+	char unused_3[116];
+	int weapon;
+	char unused_4[11896];
+} playerState_t; //size: 0x2F64 (12132)
+
+typedef struct {
+	char unused_1[12];
+	playerState_t ps;
+	char unused_2[131340];
+} snapshot_t; //size: 0x2307C (143484)
+
+#define METRES			true				//output the distance in metres (or otherwise, units)
+#define PRECISION		3				//round the distance to this many decimal places
+#define	THRESHOLD		100				//discard jumps with a distance under this value
+
+#define BUFFER_SIZE		32 + PRECISION
+#define UNIT_WORD		(METRES ? "metres" : "units")
+
+bool jumped = false;
+vec2_t launchOrigin;
+
+void CG_GameMessage(char* text)
+{
+	__asm
+	{
+		push text
+		push 0
+		mov esi, 43DDA0h
+		call esi
+		add esp, 8
+	}
+}
+
+StompHook jumpHook;
+DWORD jumpHookLoc = 0x44D860;
+
+void Hook() {
+	snapshot_t * snap;
+
+	_asm mov snap, ebx
+
+	if (!snap)
+	{
+		return;
+	}
+	
+	bool inAir = (snap->ps.groundEntityNum == ENTITYNUM_NONE) && (snap->ps.weapon != 0);
+
+	if (inAir && !jumped)
+	{
+		launchOrigin[0] = snap->ps.origin[0];
+		launchOrigin[1] = snap->ps.origin[1];
+	}
+	else if (!inAir && jumped)
+	{
+		float dist = sqrt(
+			pow(fabs(snap->ps.origin[0] - launchOrigin[0]), 2)
+				+
+			pow(fabs(snap->ps.origin[1] - launchOrigin[1]), 2)
+		);
+
+		if (METRES)
+		{
+			dist *= 0.0254f;
+		}
+
+		if (dist >= THRESHOLD)
+		{
+			char* format = (char*)malloc(BUFFER_SIZE);
+			char* buffer = (char*)malloc(BUFFER_SIZE);
+
+			sprintf(format, BUFFER_SIZE, "You jumped ^2%%.%if ^7%%s", PRECISION);
+			sprintf(buffer, BUFFER_SIZE, format, dist, UNIT_WORD);
+
+			CG_GameMessage(buffer);
+		}
+	}
+
+	jumped = inAir;
+}
+
+void DetourFunc(DWORD loc, void * func, int nops) {
+	int size = 19 + nops;
+	BYTE * mem = (BYTE *)malloc(size);
+
+	mem[0] = 0x60; //PUSHAD
+	mem[1] = 0x9C; //PUSHFD
+	mem[2] = 0xE8; //CALL
+	* (DWORD *)(mem + 3) = (DWORD)((DWORD)func - (DWORD)(mem + 7));
+	mem[7] = 0x9D; //POPFD
+	mem[8] = 0x61; //POPAD
+
+	memcpy(mem + 9, (void *)loc, nops + 5);
+	mem[size - 5] = 0xE9; //JMP
+	* (DWORD *)(mem + (size - 4)) = (DWORD)((DWORD)(loc + 5 + nops) - (DWORD)(mem + size));
+
+	DWORD dwBack;
+	VirtualProtect((LPVOID)loc, 5 + nops, PAGE_READWRITE, &dwBack);
+
+	* (BYTE *)loc = 0xE9;
+	* (DWORD *)(loc + 1) = (DWORD)(mem - (loc + 5));
+	
+	memset((void *)(loc + 5), 0x90, nops);
+
+	VirtualProtect((LPVOID)loc, 5 + nops, dwBack, &dwBack);
+}
+
+void Initialize() {
+	//DetourFunc(CG_SetNextSnap + 24, &Hook, 0);
+
+	jumpHook.initialize(jumpHookLoc + 24, Hook, 19, true);
+	jumpHook.installHook();
+}
+
 bool __stdcall DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 {
 	switch (dwReason)
@@ -91,6 +228,7 @@ bool __stdcall DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 		case DLL_PROCESS_ATTACH:
 			DetectD3DX9_34();
 			Main_SetSafeInit();
+			//CreateThreadMin(Initialize);
 			break;
 
 		case DLL_PROCESS_DETACH:
