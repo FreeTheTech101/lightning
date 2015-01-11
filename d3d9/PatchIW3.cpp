@@ -100,7 +100,7 @@ void PatchIW3_VA();
 
 void UI_AddString(const char* str, const char* replc);
 
-void CL_Test_f()
+void CL_TestCommand_f()
 {
 	Com_Printf(0, "[testCommand] hello!\n");
 }
@@ -114,9 +114,9 @@ void PatchIW3()
 	}
 #endif
 
-	static cmd_function_t testCmd;
-	Cmd_AddCommand("testCommand", CL_Test_f);
-	//Cmd_AddServerCommand("testCommand", CL_Test_f, &testCmd);
+	static cmd_function_t testCommand;
+	//Cmd_AddCommand("testCommand", CL_TestCommand_f);
+	//Cmd_AddServerCommand("testCommand", CL_TestCommand_f, &testCommand);
 
 	// remove improper quit message
 	*(WORD*)0x577415 = 0xEB50;
