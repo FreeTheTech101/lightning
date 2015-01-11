@@ -14,9 +14,6 @@
 
 #include "StdInc.h"
 
-typedef void* (__cdecl * R_RegisterFont_t)(const char* asset, int);
-R_RegisterFont_t R_RegisterFont = (R_RegisterFont_t)0x5F1EC0;
-
 void DrawText(char* text, void* font, float* color, float x, float y, float sizeX, float sizeY, float f1, float f2)
 {
 	DWORD dwCall = 0x5F6B00;
@@ -45,11 +42,13 @@ DWORD updateScreenHookLoc = 0x475052;
 void DrawBranding()
 {
 	float size = 1.0f;
-	void* font = R_RegisterFont("fonts/bigFont", 7);
-
 	float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
+	void* font = R_RegisterFont("fonts/bigFont", 7);
+	void* font2 = DB_FindXAssetHeader(ASSET_TYPE_FONT, "fonts/objectivefont");
+
 	DrawText("^1Lightning / alpha build " BUILDNUMBER_STR, font, color, 150, 250, size, size, 0.0f, 0.0f);
+	DrawText("^2Lightning / alpha build " BUILDNUMBER_STR, font2, color, 200, 300, size, size, 0.0f, 0.0f);
 }
 
 #pragma optimize("", off)
@@ -81,8 +80,8 @@ HWND WINAPI CreateWindowExAWrap_G(DWORD dwExStyle, LPCSTR lpClassName, LPCSTR lp
 void PatchIW3_Branding()
 {
 	// hook SCR_UpdateFrame call in SCR_UpdateScreen
-	updateScreenHook.initialize(updateScreenHookLoc, UpdateScreenHookStub);
-	updateScreenHook.installHook();
+	//updateScreenHook.initialize(updateScreenHookLoc, UpdateScreenHookStub);
+	//updateScreenHook.installHook();
 
 	// createwindowexa on winconsole
 	static DWORD wcCWEx = (DWORD)CreateWindowExAWrap_WC;

@@ -8,7 +8,7 @@ Cmd_AddServerCommand_t Cmd_AddServerCommand = (Cmd_AddServerCommand_t)0x4F9140;
 Com_PrintError_t Com_PrintError = (Com_PrintError_t)0x4FCC80;
 
 
-DB_FindXAssetHeader_t DB_FindXAssetHeader = (DB_FindXAssetHeader_t)0x552490;
+DB_FindXAssetHeader_t DB_FindXAssetHeader = (DB_FindXAssetHeader_t)0x489570;
 
 
 Dvar_RegisterBool_t Dvar_RegisterBool = (Dvar_RegisterBool_t)0x56C350;
@@ -40,6 +40,8 @@ bool NET_StringToAdr(const char* address, netadr_t* adr)
 	__asm mov ecx, 0xFFFFFFFF;
 	NET_StringToAdr_CoD4(adr);
 }*/
+
+R_RegisterFont_t R_RegisterFont = (R_RegisterFont_t)0x5F1EC0;
 
 typedef void (__cdecl* sendOOB_t)(int, int, int, int, int, int, const char*);
 sendOOB_t OOBPrint = (sendOOB_t)0x508BF0; //0x4AEF00 IW4 159
