@@ -76,3 +76,13 @@ char* Auth_GetObfuscatedUsername();
 char* Auth_GetSessionID();
 int Auth_GetUserID();
 char* Auth_GetCountry();
+
+enum NUITeam
+{
+	TEAM_ARAB,
+	TEAM_MILITIA,
+	TEAM_RANGERS,
+	TEAM_TASKFORCE141,
+	TEAM_USSR,
+	TEAM_SOCOM
+};

@@ -98,12 +98,10 @@ void PatchIW3_Branding();
 void PatchIW3_LocalizedStrings();
 void PatchIW3_VA();
 
-void UI_AddString(const char* str, const char* replc);
+void PatchIW3_NUI();
+void PatchIW3_Materialism();
 
-void CL_TestCommand_f()
-{
-	Com_Printf(0, "[testCommand] hello!\n");
-}
+void UI_AddString(const char* str, const char* replc);
 
 void PatchIW3()
 {
@@ -113,11 +111,6 @@ void PatchIW3()
 		TerminateProcess(GetCurrentProcess(), 0);
 	}
 #endif
-
-	static cmd_function_t testCommand;
-	//Cmd_AddCommand("testCommand", CL_TestCommand_f);
-	//Cmd_AddServerCommand("testCommand", CL_TestCommand_f, &testCommand);
-
 	// remove improper quit message
 	*(WORD*)0x577415 = 0xEB50;
 
@@ -171,6 +164,9 @@ void PatchIW3()
 	PatchIW3_Branding();
 	//PatchIW3_LocalizedStrings();
 	PatchIW3_VA();
+
+	PatchIW3_NUI();
+	PatchIW3_Materialism();
 }
 
 CallHook helloHook;

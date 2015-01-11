@@ -114,6 +114,11 @@ HMONITOR __stdcall myIDirect3D9::GetAdapterMonitor(UINT Adapter)
     return(m_pIDirect3D9->GetAdapterMonitor(Adapter));
 }
 
+HWND g_nuiHWND;
+int g_nuiWidth;
+int g_nuiHeight;
+IDirect3DDevice9* g_nuiDevice;
+
 HRESULT __stdcall myIDirect3D9::CreateDevice(UINT Adapter,D3DDEVTYPE DeviceType,HWND hFocusWindow,DWORD BehaviorFlags,D3DPRESENT_PARAMETERS* pPresentationParameters,IDirect3DDevice9** ppReturnedDeviceInterface)
 {
     // global var
@@ -122,6 +127,12 @@ HRESULT __stdcall myIDirect3D9::CreateDevice(UINT Adapter,D3DDEVTYPE DeviceType,
 	// we intercept this call and provide our own "fake" Device Object
 	HRESULT hres = m_pIDirect3D9->CreateDevice( Adapter, DeviceType, hFocusWindow, BehaviorFlags, pPresentationParameters, ppReturnedDeviceInterface);
     
+	g_nuiHWND = pPresentationParameters->hDeviceWindow;
+	g_nuiWidth = pPresentationParameters->BackBufferWidth;
+	g_nuiHeight = pPresentationParameters->BackBufferHeight;
+
+	g_nuiDevice = *ppReturnedDeviceInterface;
+
 	// Create our own Device object and store it in global pointer
 	// note: the object will delete itself once Ref count is zero (similar to COM objects)
 	gl_pmyIDirect3DDevice9 = new myIDirect3DDevice9(*ppReturnedDeviceInterface);

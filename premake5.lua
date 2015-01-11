@@ -28,17 +28,18 @@ solution "iw3cli"
 		
 		files
 		{
-			"d3d9/**.cpp", "d3d9/**.h", "d3d9/d3d9.def", "d3d9/StdInc.cpp"
+			"d3d9/**.cpp", "d3d9/**.h", "d3d9/d3d9.def", "d3d9/StdInc.cpp", "d3d9/nui/**.cpp", "d3d9/nui/**.h"
 		}
+
+		links { "libcurl", "pdcurses", "libnp", "credui", "detours", "delayimp", "libcef_dll", "libcef" }
+		
+		libdirs { "deps/lib/", "libcef/lib/" }
+		includedirs { "deps/include/np/", "libcef/" }
+
+		linkoptions "/DELAYLOAD:libcef.dll"
 
 		pchsource "d3d9/StdInc.cpp"
 		pchheader "StdInc.h"
-		
-		includedirs { "deps/include/np/" }
-		
-		libdirs { "deps/lib/" }
-
-		links { "libcurl.lib", "pdcurses.lib", "libnp.lib", "credui.lib", "detours.lib" }
 
 		configuration "windows"
 			linkoptions "/IGNORE:4248 /IGNORE:4049 /IGNORE:4099 /DYNAMICBASE:NO /SAFESEH:NO"
@@ -49,6 +50,12 @@ solution "iw3cli"
 			"call \"$(SolutionDir)\\deps\\tools\\gitrev.cmd\"",
 			"popd"
 		}
+
+		configuration "Debug*"
+			links { "libcefd" }
+
+		configuration "Release*"
+			links { "libcef" }
 
 	project "InfinityScript"
 		targetname "InfinityScript"
@@ -61,3 +68,21 @@ solution "iw3cli"
 		}
 
 		links { "System", "System.Core", "System.Data", "System.Xml", "Microsoft.CSharp" }
+
+	project "libcef_dll"
+			targetname "libcef_dll_wrapper"
+			language "C++"
+			kind "StaticLib"
+			
+			defines { "USING_CEF_SHARED", "NOMINMAX", "WIN32" }
+			
+			flags { "NoIncrementalLink", "NoMinimalRebuild" }
+			
+			includedirs { ".", "libcef" }
+			
+			buildoptions "/MP"
+			
+			files
+			{
+				"libcef/libcef_dll/**.cc", "libcef/libcef_dll/**.cpp", "libcef/libcef_dll/**.h"
+			}

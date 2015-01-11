@@ -1,6 +1,6 @@
 #pragma once
 
-enum XAssetType
+typedef enum assetType_e
 {
     ASSET_TYPE_XMODELPIECES = 0x0,
     ASSET_TYPE_PHYSPRESET = 0x1,
@@ -37,8 +37,8 @@ enum XAssetType
     ASSET_TYPE_STRINGTABLE = 0x20,
     ASSET_TYPE_COUNT = 0x21,
     ASSET_TYPE_STRING = 0x21,
-    ASSET_TYPE_ASSETLIST = 0x22,
-};
+    ASSET_TYPE_ASSETLIST = 0x22
+} assetType_t;
 
 struct GfxImage
 {
