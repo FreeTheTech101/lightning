@@ -14,103 +14,51 @@
 
 #include "StdInc.h"
 
-typedef int(__cdecl * R_TextWidth_t)(const char* text, int maxlength, Font* font);
-R_TextWidth_t R_TextWidth = (R_TextWidth_t)0x5F1EE0;
-
-typedef void* (__cdecl * R_RegisterFont_t)(const char* asset);
+typedef void* (__cdecl * R_RegisterFont_t)(const char* asset, int);
 R_RegisterFont_t R_RegisterFont = (R_RegisterFont_t)0x5F1EC0;
 
-typedef void (__cdecl * R_AddCmdDrawText_t)(const char* text, int, void* font, float screenX, float screenY, float, float, float rotation, float* color, int);
-R_AddCmdDrawText_t R_AddCmdDrawText = (R_AddCmdDrawText_t)0x4707A0;
-
-CallHook drawDevStuffHook;
-DWORD drawDevStuffHookLoc = 0x5ACB99; // * DrawMyShit oh
-
-void *GetFont(const char *FontName, int Unknown) 
-{ 
-    void *FontType = NULL; 
-    DWORD dwRegisterFont = 0x5F1EC0; 
-
-    __asm 
-    { 
-        push Unknown 
-        push FontName 
-        mov ecx, dwRegisterFont 
-        call ecx 
-        mov FontType, eax 
-        add esp, 8 
-    } 
-
-    return FontType; 
-}
-
-int R_GetScaledWidth(const char* text, float sizeX, void* font)
+void DrawText(char* text, void* font, float* color, float x, float y, float sizeX, float sizeY, float f1, float f2)
 {
-	if (!R_TextWidth)
+	DWORD dwCall = 0x5F6B00;
+
+	__asm
 	{
-		return 0;
+		push 0
+		push f2
+		push f1
+		push sizeY
+		push sizeX
+		push y
+		push x 
+		push font
+		push 0x7FFFFFFF
+		push text
+		mov ecx, color
+		call [dwCall]
+		add esp, 0x28
 	}
-
-	int normalWidth = R_TextWidth(text, 0x7FFFFFFF, (Font*)font);
-	double scaledWidth = normalWidth * sizeX;
-	return (int)scaledWidth;
 }
 
-void DrawDemoWarning()
+CallHook updateScreenHook;
+DWORD updateScreenHookLoc = 0x475052;
+
+void DrawBranding()
 {
-	/* float size = 0.7f;
-	void* font = R_RegisterFont("fonts/normalfont");
-
-	int xOffset = 10;
-	int textWidth = R_GetScaledWidth(VERSIONSTRING, size, font);
-
-	int width = *(int*)0x66E1C68 - (xOffset + textWidth);
+	float size = 1.0f;
+	void* font = R_RegisterFont("fonts/bigFont", 7);
 
 	float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	if (CL_IsCgameInitialized())
-	{
-		color[3] = 0.7f;
-	}
-
-	R_AddCmdDrawText(VERSIONSTRING, 0x7FFFFFFF, font, width, 30, size, size, 0.0f, color, 0); */
-}
-
-void DrawBrandingNotice()
-{
-	// #yolo
-	//nope, MessageBox will call MessageBoxA in case your project uses ASCII and not UNICODE, if UNICODE, then MessaageBoxW
-	// okie dokie
-	MessageBoxA(0, 0, 0, 0);
-	MessageBoxA(NULL, "Hello there :>", "Hi, moron", MB_OK | MB_ICONEXCLAMATION);
-
-	//easier to find ;) gg
-	Com_Printf(0, "[9832590752097254807245097542254] drawing demo warning");
-
-	//void* font = DB_FindXAssetHeader(ASSET_TYPE_FONT, "fonts/consolefont");
-	
-	//R_AddCmdDrawText("Warfare^^72 pre-alpha", 0x7FFFFFFF, font, 10, 65, 1.5f, 1.5f, 0.0f, color, 0);
-
-	void* font = R_RegisterFont("fonts/normalfont");
-	float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	DrawText("^1Lightning / alpha build " BUILDNUMBER_STR, font, color, 150, 250, size, size, 0.0f, 0.0f);
 }
 
 #pragma optimize("", off)
-__declspec(naked) void DrawBrandingNoticeStub()
+void __declspec(naked) UpdateScreenHookStub()
 {
 	__asm
 	{
-		call DrawBrandingNotice
-		retn
-	}
-}
-
-void __declspec(naked) DrawDevStuffHookStub()
-{
-	__asm
-	{
-		call DrawBrandingNotice
-		jmp drawDevStuffHook.pOriginal
+		call DrawBranding
+		jmp updateScreenHook.pOriginal
 	}
 }
 #pragma optimize("", on)
@@ -122,23 +70,19 @@ HWND WINAPI CreateWindowExAWrap_WC(DWORD dwExStyle, LPCSTR lpClassName, LPCSTR l
 		return CreateWindowExA(dwExStyle, lpClassName, lpWindowName, dwStyle, X, Y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
 	}
 
-	LPCWSTR windowName = L"Lightning Console";
-	return CreateWindowExW(dwExStyle, L"CoD4 WinConsole", windowName, dwStyle, X, Y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
+	return CreateWindowExW(dwExStyle, L"CoD4 WinConsole", L"Lightning Console", dwStyle, X, Y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
 }
 
 HWND WINAPI CreateWindowExAWrap_G(DWORD dwExStyle, LPCSTR lpClassName, LPCSTR lpWindowName, DWORD dwStyle, int X, int Y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam)
 {
-	LPCWSTR windowName = L"Lightning";
-	return CreateWindowExW(dwExStyle, L"CoD4", windowName, dwStyle, X, Y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
+	return CreateWindowExW(dwExStyle, L"CoD4", L"Lightning", dwStyle, X, Y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
 }
 
 void PatchIW3_Branding()
 {
-	drawDevStuffHook.initialize(drawDevStuffHookLoc, DrawDevStuffHookStub);
-	drawDevStuffHook.installHook();
-
-	*(BYTE*)0x52E6B4 = 0xE9;
-	*(DWORD*)0x52E6B5 = (DWORD)DrawBrandingNoticeStub - 0x52E6B4 - 5;
+	// hook SCR_UpdateFrame call in SCR_UpdateScreen
+	updateScreenHook.initialize(updateScreenHookLoc, UpdateScreenHookStub);
+	updateScreenHook.installHook();
 
 	// createwindowexa on winconsole
 	static DWORD wcCWEx = (DWORD)CreateWindowExAWrap_WC;
@@ -146,15 +90,11 @@ void PatchIW3_Branding()
 	*(DWORD**)0x57A559 = &wcCWEx;
 	*(DWORD**)0x5F49CC = &wcGEx;
 
-	// config file
-	*(DWORD*)0x6E1E89 = (DWORD)"// generated by Lightning, do not modify";
-	strcpy((char*)0x6E0AA0, "config_ln.cfg");
-
 	// displayed build tag in UI code
-	*(DWORD*)0x5434BC = (DWORD)"";
+	*(DWORD*)0x5434BC = (DWORD)VERSIONSTRING;
 
 	// console '%s: %s> ' string
-	*(DWORD*)0x46060F = (DWORD)(VERSIONSTRING "> ");
+	*(DWORD*)0x46060F = (DWORD)("IW3 MP> ");
 
 	// console version string
 	*(DWORD*)0x461B84 = (DWORD)(VERSIONSTRING " " BUILDHOST " (built " __DATE__ " " __TIME__ ")");
@@ -168,24 +108,4 @@ void PatchIW3_Branding()
 	// server list cache name
 	*(DWORD*)0x4764D9 = (DWORD)(FS_BASEGAME "/ServerCache.dat");
 	*(DWORD*)0x476545 = (DWORD)(FS_BASEGAME "/ServerCache.dat");
-
-	// players -> lightning/UserData, and similar
-	//strcpy((char*)0x6E0D7C, "UserData");
-	//strcpy((char*)0x6E0D70, "UserProfiles");
-	//strcpy((char*)0x6E0E18, "UserProfiles/%s/");
-	//strcpy((char*)0x6E0D84, "UserProfiles/active.txt");
-
-	// devraw -> lightning/DevData/devraw, and similar
-	strcpy((char*)0x6F18B8, FS_BASEGAME "/DevData/devraw");
-	strcpy((char*)0x6F1E58, FS_BASEGAME "/DevData/devraw_shared");
-	strcpy((char*)0x6F18AC, FS_BASEGAME "/DevData/raw_shared");
-	//strcpy((char*)0x6F18AD, "lightning/DevData/raw");
-
-	// null profiles?
-	//*(DWORD*)0x5462B4 = (DWORD)""; // createPlayerProfile, 0x5462B3
-	//*(DWORD*)0x546202 = (DWORD)""; // addPlayerProfiles, 0x546201
-	//*(DWORD*)0x546300 = (DWORD)""; // loadPlayerProfile, 0x5462FF
-
-	// disable 'Start New Server'
-	//*(DWORD*)0x545BEE = (DWORD)""; // StartServer
 }
