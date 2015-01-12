@@ -1,6 +1,6 @@
 #include "StdInc.h"
 
-static void* MaterialLoadHookFunc(assetType_t type, const char* filename)
+static void Material_RegisterHandleHook(assetType_t type, const char* filename)
 {
 	/* Material* material = Material_Register(filename);
 
@@ -14,5 +14,5 @@ static void* MaterialLoadHookFunc(assetType_t type, const char* filename)
 
 static HookFunction hookFunction([] ()
 {
-	hook::jump(0x5F2A90, MaterialLoadHookFunc);
+	hook::jump(0x5F2A90, Material_RegisterHandleHook);
 });
