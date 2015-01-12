@@ -9,8 +9,6 @@
 #define NP_SERVER "fluxy.triobit.net"
 #define MASTERSERVERIP 0x157C923F
 
-#define FS_BASEGAME "lightning"
-
 #define NP_DISABLED
 #define KEY_DISABLED
 

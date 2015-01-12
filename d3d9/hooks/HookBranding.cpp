@@ -36,9 +36,18 @@ static HookFunction hookFunction([] ()
 	hook::charptr(0x4FF1E1, VERSIONSTRING " (built " __DATE__ " " __TIME__ ")\n");
 
 	// set fs_basegame to (will apply before fs_game)
-	hook::charptr(0x55E4C9, FS_BASEGAME);
+	hook::charptr(0x55E4C9, "GameData/ShipFiles");
 
 	// server list cache name
-	hook::charptr(0x4764D9, FS_BASEGAME "/ServerCache.dat");
-	hook::charptr(0x476545, FS_BASEGAME "/ServerCache.dat");
+	hook::charptr(0x4764D9, "GameData/ShipFiles/ServerCache.dat");
+	hook::charptr(0x476545, "GameData/ShipFiles/ServerCache.dat");
+
+	// devraw -> DevData/devraw, and similar
+	hook::charptr(0x55E788, "DevData/raw");
+	hook::charptr(0x55E6D5, "DevData/raw_shared");
+	hook::charptr(0x55E6BE, "DevData/devraw");
+	hook::charptr(0x55E6A7, "DevData/devraw_shared");
+
+	// video file path
+	hook::charptr(0x60D03C, "%s\\GameData\\Videos\\%s.%s");
 });
