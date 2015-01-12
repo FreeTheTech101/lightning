@@ -33,13 +33,6 @@ unsigned int R_HashString(const char* string)
 	return hash;
 }
 
-typedef int (__cdecl * _Reader_t)(int, int); // defaulting to int for now
-typedef bool (__cdecl * Image_LoadFromFileWithReader_t)(GfxImage* image, _Reader_t reader);
-Image_LoadFromFileWithReader_t Image_LoadFromFileWithReader = (Image_LoadFromFileWithReader_t)0x642380;
-
-typedef void (__cdecl * Image_Release_t)(GfxImage* image);
-Image_Release_t Image_Release = (Image_Release_t)0x6168E0;
-
 #pragma optimize("", off)
 void Image_Setup_(GfxImage* image, short width, short height, short depth, unsigned int flags, int format)
 {
@@ -189,7 +182,7 @@ GfxImage* g_nuiImage;
 
 Material* Material_Register(const char* filename)
 {
-	/* if (!_stricmp(filename, "nui"))
+	if (!_stricmp(filename, "nui"))
 	{
 		return Material_ObtainImage(filename, g_nuiImage);
 	}
@@ -205,19 +198,19 @@ Material* Material_Register(const char* filename)
 	if (!_stricmp(filename, "codfont"))
 	{
 		return Material_Obtain(filename, filename);
-	} */
+	}
 
 	return NULL;
 }
 
 static void* Material_RegisterHandleHook(assetType_t type, const char* filename)
 {
-	/* Material* material = Material_Register(filename);
+	Material* material = Material_Register(filename);
 
 	if (material)
 	{
 		return material;
-	} */
+	}
 
 	return (Material*)GameEngine::DB_FindXAssetHeader(ASSET_TYPE_MATERIAL, filename);
 }

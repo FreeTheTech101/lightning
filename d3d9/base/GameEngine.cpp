@@ -48,4 +48,9 @@ Com_Error_t GameEngine::Com_Error = (Com_Error_t)0x4FD330;
 
 DB_FindXAssetHeader_t GameEngine::DB_FindXAssetHeader = (DB_FindXAssetHeader_t)0x489570;
 
+Image_LoadFromFileWithReader_t GameEngine::Image_LoadFromFileWithReader = (Image_LoadFromFileWithReader_t)0x642380;
+Image_Release_t GameEngine::Image_Release = (Image_Release_t)0x6168E0;
+
+Menus_FindByName_t GameEngine::Menus_FindByName = (Menus_FindByName_t)0x54C230;
+
 R_RegisterFont_t GameEngine::R_RegisterFont = (R_RegisterFont_t)0x5F1EC0;
