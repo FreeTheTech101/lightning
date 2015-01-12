@@ -101,12 +101,15 @@ void UI_AddString(const char* str, const char* replc);
 
 void PatchIW3()
 {
+	HookFunctionBase::RunAll();
+
 #ifndef NP_DISABLED
 	if (!NP_Initialize())
 	{
 		TerminateProcess(GetCurrentProcess(), 0);
 	}
 #endif
+
 	// do not register lan_netauthorize
 	memset((void*)0x507D80, 0x90, 5);
 

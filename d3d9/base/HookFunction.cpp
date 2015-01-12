@@ -28,7 +28,6 @@ THE SOFTWARE.
 */
 
 #include "StdInc.h"
-#include "HookFunction.h"
 
 static HookFunctionBase* g_hookFunctions;
 
