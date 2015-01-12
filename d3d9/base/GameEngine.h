@@ -1,6 +1,6 @@
 #pragma once
 
-#pragma region menuDef
+#pragma region menu structs
 enum operationEnum
 {
   OP_NOOP = 0x0,
@@ -181,15 +181,6 @@ struct ItemKeyHandler
   int key;
   const char *action;
   ItemKeyHandler *next;
-};
- 
-union itemDefData_t
-{
-  listBoxDef_s *listBox;
-  editFieldDef_s *editField;
-  multiDef_s *multi;
-  const char *enumDvarName;
-  void *data;
 };
  
 struct rectDef_s
