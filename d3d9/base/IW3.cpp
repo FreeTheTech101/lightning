@@ -62,3 +62,54 @@ char* GetStringConvar(char* key) {
 
     return var->current.string;
 }
+
+// console commands
+DWORD* cmd_id = (DWORD*)0x1410B40;
+DWORD* cmd_argc = (DWORD*)0x1410B84;
+DWORD** cmd_argv = (DWORD**)0x1410BA4;
+
+/*
+============
+Cmd_Argc
+============
+*/
+/*int		Cmd_Argc( void ) {
+	return cmd_argc[*cmd_id];
+}*/
+
+/*
+============
+Cmd_Argv
+============
+*/
+/*char	*Cmd_Argv( int arg ) {
+	if ( (unsigned)arg >= cmd_argc[*cmd_id] ) {
+		return "";
+	}
+	return (char*)(cmd_argv[*cmd_id][arg]);	
+}*/
+
+DWORD* cmd_id_sv = (DWORD*)0x1433408;
+DWORD* cmd_argc_sv = (DWORD*)0x143344C;
+DWORD** cmd_argv_sv = (DWORD**)0x143346C;
+
+/*
+============
+Cmd_Argc
+============
+*/
+int		Cmd_ArgcSV( void ) {
+	return cmd_argc_sv[*cmd_id_sv];
+}
+
+/*
+============
+Cmd_Argv
+============
+*/
+char	*Cmd_ArgvSV( int arg ) {
+	if ( (unsigned)arg >= cmd_argc_sv[*cmd_id_sv] ) {
+		return "";
+	}
+	return (char*)(cmd_argv_sv[*cmd_id_sv][arg]);	
+}

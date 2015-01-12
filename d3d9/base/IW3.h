@@ -441,3 +441,24 @@ void NET_OutOfBandPrint(int type, netadr_t adr, const char* message, ...);
 extern int* svs_numclients;
 
 char* GetStringConvar(char* key);
+
+// inline cmd functions
+extern DWORD* cmd_id;
+extern DWORD* cmd_argc;
+extern DWORD** cmd_argv;
+
+inline int  Cmd_Argc( void )
+{
+  return cmd_argc[*cmd_id];
+}
+
+inline char *Cmd_Argv( int arg )
+{
+  if ( (unsigned)arg >= cmd_argc[*cmd_id] ) {
+    return "";
+  }
+  return (char*)(cmd_argv[*cmd_id][arg]); 
+}
+
+int Cmd_ArgcSV( void );
+char *Cmd_ArgvSV( int );
