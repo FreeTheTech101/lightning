@@ -215,7 +215,28 @@ static void* Material_RegisterHandleHook(assetType_t type, const char* filename)
 	return (Material*)GameEngine::DB_FindXAssetHeader(ASSET_TYPE_MATERIAL, filename);
 }
 
+void Material_TableDebug_f()
+{
+	if (Cmd_Argc() < 2)
+	{
+		GameEngine::Com_Printf(0, "Usage: %s [material name]\n", Cmd_Argv(0));
+		return;
+	}
+
+	Material* material = materialTable[Cmd_Argv(1)];
+	GameEngine::Com_Printf(0, "%s is actually %s\n", Cmd_Argv(1), material->name);
+}
+
 static HookFunction hookFunction([] ()
 {
+	materialTable.set_empty_key("");
+
 	hook::jump(0x5F2A90, Material_RegisterHandleHook);
+
+	GameEngine::Cmd_AddCommand("materialTableDebug", Material_TableDebug_f);
 });
+
+void ClearAllCustomMaterials()
+{
+	materialTable.clear();
+}
