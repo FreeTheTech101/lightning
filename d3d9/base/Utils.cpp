@@ -146,7 +146,7 @@ void Info_SetValueForKey( char *s, const char *key, const char *value ) {
         const char* blacklist = "\\;\"";
 
         if ( strlen( s ) >= MAX_INFO_STRING ) {
-                Com_Printf( 0, "Info_SetValueForKey: oversize infostring");
+                GameEngine::Com_Printf( 0, "Info_SetValueForKey: oversize infostring");
 		return;
         }
 
@@ -154,7 +154,7 @@ void Info_SetValueForKey( char *s, const char *key, const char *value ) {
         {
                 if (strchr (key, *blacklist) || strchr (value, *blacklist))
                 {
-                        Com_Printf (0, "Can't use keys or values with a '%c': %s = %s\n", *blacklist, key, value);
+                        GameEngine::Com_Printf (0, "Can't use keys or values with a '%c': %s = %s\n", *blacklist, key, value);
                         return;
                 }
         }
@@ -167,7 +167,7 @@ void Info_SetValueForKey( char *s, const char *key, const char *value ) {
 
         if (strlen(newi) + strlen(s) >= MAX_INFO_STRING)
         {
-                Com_Printf (0, "Info string length exceeded\n");
+                GameEngine::Com_Printf (0, "Info string length exceeded\n");
                 return;
         }
 

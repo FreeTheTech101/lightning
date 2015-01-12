@@ -30,6 +30,8 @@
 #include <windows.h>
 #undef CreateRemoteThread
 #undef ReadDirectoryChangesW
+
+
 // Direct3D
 #include "d3d9.h"
 #include "myIDirect3D9.h"
@@ -65,6 +67,9 @@
 
 // Hooking
 #include "Hooking.h"
+#include "HookFunction.h"
+
+#include "GameEngine.h"
 
 // more names
 void PatchIW3();

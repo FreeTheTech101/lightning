@@ -22,7 +22,7 @@ DWORD pRemoteKickCommand = 0x52817B;
 
 void KickCommandHook(char d1, char d2)
 {
-	Com_Printf(0, "Usage: kick <player> [reason]\n");
+	GameEngine::Com_Printf(0, "Usage: kick <player> [reason]\n");
 }
 
 void PatchIW3_ClientCommands()

@@ -1,15 +1,5 @@
 #include "StdInc.h"
 
-Com_Error_t Com_Error = (Com_Error_t)0x4FD330;
-Com_Printf_t Com_Printf = (Com_Printf_t)0x4FCBC0;
-
-Cmd_AddServerCommand_t Cmd_AddServerCommand = (Cmd_AddServerCommand_t)0x4F9140;
-
-Com_PrintError_t Com_PrintError = (Com_PrintError_t)0x4FCC80;
-
-
-DB_FindXAssetHeader_t DB_FindXAssetHeader = (DB_FindXAssetHeader_t)0x489570;
-
 
 Dvar_RegisterBool_t Dvar_RegisterBool = (Dvar_RegisterBool_t)0x56C350;
 Dvar_RegisterInt_t Dvar_RegisterInt = (Dvar_RegisterInt_t)0x56C350;
@@ -40,8 +30,6 @@ bool NET_StringToAdr(const char* address, netadr_t* adr)
 	__asm mov ecx, 0xFFFFFFFF;
 	NET_StringToAdr_CoD4(adr);
 }*/
-
-R_RegisterFont_t R_RegisterFont = (R_RegisterFont_t)0x5F1EC0;
 
 typedef void (__cdecl* sendOOB_t)(int, int, int, int, int, int, const char*);
 sendOOB_t OOBPrint = (sendOOB_t)0x508BF0; //0x4AEF00 IW4 159
@@ -76,36 +64,3 @@ char* GetStringConvar(char* key) {
 }
 
 cmd_function_t** cmd_functions = (cmd_function_t**)0x1410B3C;
-
-void Cmd_AddCommand(const char *name, CommandCB_t function)
-{
-	// check if the command is already defined by
-	// asking calling the original Cmd_AddCommand with the name argument
-	if (((cmd_function_t*(*)(const char*))0x4F9950)(name))
-	{
-		if (function != NULL)
-		{
-			Com_Printf(16, "Cmd_AddCommand: %s already defined\n", name);
-		}
-
-		return;
-	}
-
-	cmd_function_t *cmd = (cmd_function_t*)malloc(sizeof(struct cmd_function_s));
-	cmd->name = name;
-	cmd->function = function;
-	cmd->next = *cmd_functions;
-	*cmd_functions = cmd;
-}
-
-void CG_GameMessage(char* text)
-{
-	__asm
-	{
-		push text
-		push 0
-		mov esi, 43DDA0h
-		call esi
-		add esp, 8
-	}
-}

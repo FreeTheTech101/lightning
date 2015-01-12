@@ -222,7 +222,7 @@ void* MaterialLoadHookFunc(assetType_t type, const char* filename)
 		return material;
 	}
 
-	return (Material*)DB_FindXAssetHeader(ASSET_TYPE_MATERIAL, filename);
+	return (Material*)GameEngine::DB_FindXAssetHeader(ASSET_TYPE_MATERIAL, filename);
 }
 
 void Material_TableDebug_f()
@@ -236,7 +236,7 @@ void Material_TableDebug_f()
 	}
 
 	Material* material = materialTable[Cmd_Argv(1)];
-	Com_Printf(0, "%s is actually %s\n", Cmd_Argv(1), material->name); */
+	GameEngine::Com_Printf(0, "%s is actually %s\n", Cmd_Argv(1), material->name); */
 }
 
 void PatchIW3_Materialism()
@@ -246,7 +246,7 @@ void PatchIW3_Materialism()
 	materialLoadHook.initialize(materialLoadHookLoc, MaterialLoadHookFunc);
 	materialLoadHook.installHook();
 
-	Cmd_AddCommand("materialTableDebug", Material_TableDebug_f);
+	GameEngine::Cmd_AddCommand("materialTableDebug", Material_TableDebug_f);
 }
 
 void ClearAllCustomMaterials()

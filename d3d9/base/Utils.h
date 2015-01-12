@@ -12,7 +12,7 @@
 //void Trace(char* source, char* message, ...);
 //void Trace2(char* message, ...);
 #define Trace(source, message, ...) Trace2("[" source "] " message, __VA_ARGS__)
-#define Trace2(message, ...) Com_Printf(0, message, __VA_ARGS__)
+#define Trace2(message, ...) GameEngine::Com_Printf(0, message, __VA_ARGS__)
 
 bool FileExists(const char* file);
 size_t FileSize(const char* file);

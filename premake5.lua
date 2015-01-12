@@ -28,17 +28,26 @@ solution "iw3cli"
 		
 		files
 		{
-			"d3d9/**.cpp", "d3d9/**.h", "d3d9/d3d9.def", "d3d9/StdInc.cpp", "d3d9/nui/**.cpp", "d3d9/nui/**.h"
+			"d3d9/**.cpp",
+			"d3d9/**.h",
+			"d3d9/d3d9.def",
+			"d3d9/base/StdInc.cpp",
+			"d3d9/base/**.cpp",
+			"d3d9/base/**.h",
+			"d3d9/d3d9/**.cpp",
+			"d3d9/d3d9/**.h",
+			"d3d9/hooks/nui/**.cpp",
+			"d3d9/hooks/nui/**.h"
 		}
 
 		links { "libcurl", "pdcurses", "libnp", "credui", "detours", "delayimp", "libcef_dll", "libcef" }
 		
 		libdirs { "deps/lib/", "libcef/lib/" }
-		includedirs { "deps/include/np/", "libcef/" }
+		includedirs { "d3d9/d3d9/", "deps/include/np/", "libcef/" }
 
 		linkoptions "/DELAYLOAD:libcef.dll"
 
-		pchsource "d3d9/StdInc.cpp"
+		pchsource "d3d9/base/StdInc.cpp"
 		pchheader "StdInc.h"
 
 		configuration "windows"

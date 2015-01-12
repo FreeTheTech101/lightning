@@ -128,18 +128,6 @@ typedef struct {
 bool jumped = false;
 vec2_t launchOrigin;
 
-void CG_GameMessage(char* text)
-{
-	__asm
-	{
-		push text
-		push 0
-		mov esi, 43DDA0h
-		call esi
-		add esp, 8
-	}
-}
-
 StompHook jumpHook;
 DWORD jumpHookLoc = 0x44D860;
 
@@ -181,7 +169,7 @@ void Hook() {
 			sprintf(format, BUFFER_SIZE, "You jumped ^2%%.%if ^7%%s", PRECISION);
 			sprintf(buffer, BUFFER_SIZE, format, dist, UNIT_WORD);
 
-			CG_GameMessage(buffer);
+			GameEngine::CG_GameMessage(buffer);
 		}
 	}
 

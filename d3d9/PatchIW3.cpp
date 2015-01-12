@@ -70,9 +70,6 @@ void Sys_RunInit()
 #endif
 	}
 
-	// don't show splash screen
-	memset((void*)0x57761C, 0x90, 5);
-
 	// always enable system console, not just if generating reflection probes
 	//memset((void*)0x4FF21C, 0x90, 5);
 
@@ -89,7 +86,6 @@ void Sys_RunInit()
 bool NP_Initialize();
 
 void PatchIW3_Hello();
-void PatchIW3_Dvars();
 void PatchIW3_UILoading();
 void PatchIW3_Console();
 void PatchIW3_ServerAuth();
@@ -111,12 +107,6 @@ void PatchIW3()
 		TerminateProcess(GetCurrentProcess(), 0);
 	}
 #endif
-	// remove improper quit message
-	*(WORD*)0x577415 = 0xEB50;
-
-    // remove computer changed message
-	*(WORD*)0x576775 = 0xEB2F;
-
 	// do not register lan_netauthorize
 	memset((void*)0x507D80, 0x90, 5);
 
@@ -124,16 +114,6 @@ void PatchIW3()
 	// TODO: NP ticket preauthentication
 	*(BYTE*)0x469B46 = 0xEB;
 	*(BYTE*)0x47121D = 0xEB;
-
-	// master server
-	strcpy((char*)0x6D0554, DPMASTER);
-
-	// return 'clients' key in all cases
-	*(WORD*)0x531C8D = 0x9090;
-
-	// patch hearthbeat tag
-	*(DWORD*)0x53357F = (DWORD)"LN";
-	*(DWORD*)0x5335B9 = (DWORD)"LN";
 
 	// disable punkbuster
 	*(DWORD*)0x545C55 = (DWORD)""; // startpb_popmenu
@@ -160,13 +140,11 @@ void PatchIW3()
 	//UI_AddString("MENU_START_NEW_SERVER", "Private Match");
 
 	PatchIW3_Hello();
-	PatchIW3_Dvars();
 	PatchIW3_Branding();
-	//PatchIW3_LocalizedStrings();
 	PatchIW3_VA();
 
 	PatchIW3_NUI();
-	PatchIW3_Materialism();
+	//PatchIW3_Materialism();
 }
 
 CallHook helloHook;
@@ -177,8 +155,8 @@ DWORD helloHook2Loc = 0x4FC9B6;
 
 void HelloIW(int type)
 {
-    Com_Printf(type, "%s built on %s %s\n", VERSIONSTRING, __DATE__, __TIME__);
-    Com_Printf(type, "http://triobit.net\n");
+    GameEngine::Com_Printf(type, "%s built on %s %s\n", VERSIONSTRING, __DATE__, __TIME__);
+    GameEngine::Com_Printf(type, "http://triobit.net\n");
 }
 
 #pragma optimize("", off)

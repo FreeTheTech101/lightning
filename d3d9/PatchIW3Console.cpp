@@ -216,8 +216,8 @@ void Sys_Error(const char* format, ...)
 	_vsnprintf(buffer, sizeof(buffer), format, va);
 	va_end(va);
 
-	Com_Printf(0, "ERROR:\n");
-	Com_Printf(0, buffer);
+	GameEngine::Com_Printf(0, "ERROR:\n");
+	GameEngine::Com_Printf(0, buffer);
 
 	RefreshOutput();
 

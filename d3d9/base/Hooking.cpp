@@ -95,63 +95,40 @@ void HookInstall(DWORD address, DWORD hookToInstall, int bCountBytes)
 	*(ptrdiff_t*) (pPlace + 1) = (PBYTE) hookToInstall - pPlace - 5;
 }
 
-void _patch(void* pAddress, DWORD data, DWORD iSize)
+void hook::patch(uintptr_t pAddress, DWORD data, DWORD iSize)
 {
-	switch(iSize)
+	switch (iSize)
 	{
-	case 1: *(BYTE*)pAddress = (BYTE)data;
+	case 1:
+		*(BYTE*)pAddress = (BYTE)data;
 		break;
-	case 2: *(WORD*)pAddress = (WORD)data;
+	case 2:
+		*(WORD*)pAddress = (WORD)data;
 		break;
-	case 4: *(DWORD*)pAddress = (DWORD)data;
+	case 4:
+		*(DWORD*)pAddress = (DWORD)data;
 		break;
 	}
 }
 
-void _nop(void* pAddress, DWORD size)
+void hook::nop(uintptr_t pAddress, DWORD size)
 {
-	memset(pAddress, 0x90, size);
-	return;
-
-	DWORD dwAddress = (DWORD)pAddress;
-	if ( size % 2 )
-	{
-		*(BYTE*)pAddress = 0x90;
-		dwAddress++;
-	}
-	if ( size - ( size % 2 ) )
-	{
-		DWORD sizeCopy = size - ( size % 2 );
-		do
-		{
-			*(WORD*)dwAddress = 0xFF8B;
-			dwAddress += 2;
-			sizeCopy -= 2;
-		}
-		while ( sizeCopy );	
-	}
+	memset((void*)pAddress, 0x90, size);
 }
 
-void _call(void* pAddress, DWORD data, eCallPatcher bPatchType)
+void hook::jump(uintptr_t pAddress, DWORD data)
 {
-	switch ( bPatchType )
-	{
-	case PATCH_JUMP:
-		*(BYTE*)pAddress = (BYTE)0xE9;
-		break;
-
-	case PATCH_CALL:
-		*(BYTE*)pAddress = (BYTE)0xE8;
-		break;
-
-	default:
-		break;
-	}
-
+	*(BYTE*)pAddress = (BYTE)0xE9;
 	*(DWORD*)((DWORD)pAddress + 1) = (DWORD)data - (DWORD)pAddress - 5;
 }
 
-void _charptr(void* pAddress, const char* pChar)
+void hook::call(uintptr_t pAddress, DWORD data)
+{
+	*(BYTE*)pAddress = (BYTE)0xE8;
+	*(DWORD*)((DWORD)pAddress + 1) = (DWORD)data - (DWORD)pAddress - 5;
+}
+
+void hook::charptr(uintptr_t pAddress, const char* pChar)
 {
 	*(DWORD*)pAddress = (DWORD)pChar;
 }
