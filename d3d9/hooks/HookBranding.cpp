@@ -30,7 +30,7 @@ static HookFunction hookFunction([] ()
 	hook::charptr(0x46060F, "IW3 MP> ");
 
 	// console version string
-	*(DWORD*)0x461B84 = (DWORD)(VERSIONSTRING " " BUILDHOST " (built " __DATE__ " " __TIME__ ")");
+	hook::charptr(0x461B84, VERSIONSTRING " " BUILDHOST " (built " __DATE__ " " __TIME__ ")");
 
 	// version string
 	hook::charptr(0x4FF1E1, VERSIONSTRING " (built " __DATE__ " " __TIME__ ")\n");
@@ -39,6 +39,6 @@ static HookFunction hookFunction([] ()
 	hook::charptr(0x55E4C9, FS_BASEGAME);
 
 	// server list cache name
-	*(DWORD*)0x4764D9 = (DWORD)(FS_BASEGAME "/ServerCache.dat");
-	*(DWORD*)0x476545 = (DWORD)(FS_BASEGAME "/ServerCache.dat");
+	hook::charptr(0x4764D9, FS_BASEGAME "/ServerCache.dat");
+	hook::charptr(0x476545, FS_BASEGAME "/ServerCache.dat");
 });
