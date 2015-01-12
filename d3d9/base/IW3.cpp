@@ -62,5 +62,3 @@ char* GetStringConvar(char* key) {
 
     return var->current.string;
 }
-
-cmd_function_t** cmd_functions = (cmd_function_t**)0x1410B3C;

@@ -86,18 +86,10 @@ void Sys_RunInit()
 bool NP_Initialize();
 
 void PatchIW3_Hello();
-void PatchIW3_UILoading();
 void PatchIW3_Console();
 void PatchIW3_ServerAuth();
 void PatchIW3_GUIDValidation();
-void PatchIW3_Branding();
-void PatchIW3_LocalizedStrings();
 void PatchIW3_VA();
-
-void PatchIW3_NUI();
-void PatchIW3_Materialism();
-
-void UI_AddString(const char* str, const char* replc);
 
 void PatchIW3()
 {
@@ -143,11 +135,7 @@ void PatchIW3()
 	//UI_AddString("MENU_START_NEW_SERVER", "Private Match");
 
 	PatchIW3_Hello();
-	PatchIW3_Branding();
 	PatchIW3_VA();
-
-	PatchIW3_NUI();
-	//PatchIW3_Materialism();
 }
 
 CallHook helloHook;

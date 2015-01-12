@@ -116,16 +116,16 @@ void hook::nop(uintptr_t pAddress, DWORD size)
 	memset((void*)pAddress, 0x90, size);
 }
 
-void hook::jump(uintptr_t pAddress, DWORD data)
+void hook::jump(uintptr_t pAddress, void* data)
 {
 	*(BYTE*)pAddress = (BYTE)0xE9;
-	*(DWORD*)((DWORD)pAddress + 1) = (DWORD)data - (DWORD)pAddress - 5;
+	*(DWORD*)((DWORD)pAddress + 1) = (intptr_t)data - (DWORD)pAddress - 5;
 }
 
 void hook::call(uintptr_t pAddress, DWORD data)
 {
 	*(BYTE*)pAddress = (BYTE)0xE8;
-	*(DWORD*)((DWORD)pAddress + 1) = (DWORD)data - (DWORD)pAddress - 5;
+	*(DWORD*)((DWORD)pAddress + 1) = (intptr_t)data - (DWORD)pAddress - 5;
 }
 
 void hook::charptr(uintptr_t pAddress, const char* pChar)

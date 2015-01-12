@@ -21,8 +21,8 @@ void __declspec(naked) InitNUIHookStub()
 	}
 }
 
-void PatchIW3_NUI()
+static HookFunction hookFunction([]()
 {
 	//initNUIHook.initialize(initNUIHookLoc, InitNUIHookStub);
 	//initNUIHook.installHook();
-}
+});

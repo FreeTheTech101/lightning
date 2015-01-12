@@ -1,6 +1,6 @@
 #include "StdInc.h"
 
-static void Material_RegisterHandleHook(assetType_t type, const char* filename)
+static void* Material_RegisterHandleHook(assetType_t type, const char* filename)
 {
 	/* Material* material = Material_Register(filename);
 
