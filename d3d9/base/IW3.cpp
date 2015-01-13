@@ -31,28 +31,6 @@ bool NET_StringToAdr(const char* address, netadr_t* adr)
 	NET_StringToAdr_CoD4(adr);
 }*/
 
-typedef void (__cdecl* sendOOB_t)(int, int, int, int, int, int, const char*);
-sendOOB_t OOBPrint = (sendOOB_t)0x508BF0; //0x4AEF00 IW4 159
-
-void OOBPrintT(int type, netadr_t netadr, const char* message)
-{
-	int* adr = (int*)&netadr;
-
-	OOBPrint(type, *adr, *(adr + 1), *(adr + 2), 0xFFFFFFFF, *(adr + 4), message);
-}
-
-void NET_OutOfBandPrint(int type, netadr_t adr, const char* message, ...)
-{
-	va_list args;
-	char buffer[65535];
-
-	va_start(args, message);
-	_vsnprintf(buffer, sizeof(buffer), message, args);
-	va_end(args);
-
-	OOBPrintT(type, adr, buffer);
-}
-
 int* svs_numclients = (int*)0x1CBFC8C;
 
 char* GetStringConvar(char* key) {

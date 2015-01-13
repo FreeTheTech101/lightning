@@ -40,7 +40,7 @@ solution "iw3cli"
 			"d3d9/hooks/nui/**.h"
 		}
 
-		links { "libcurl", "pdcurses", "libnp", "credui", "detours", "delayimp", "libcef_dll", "libcef" }
+		links { "libcurl", "pdcurses", "libnp", "credui", "detours", "delayimp", "libcef_dll", "libcef", "winmm" }
 		
 		libdirs { "deps/lib/", "libcef/lib/" }
 		includedirs { "d3d9/d3d9/", "deps/include/np/", "libcef/" }

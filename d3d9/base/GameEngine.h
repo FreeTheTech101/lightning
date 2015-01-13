@@ -773,6 +773,8 @@ typedef void (__cdecl * Image_Release_t)(GfxImage* image);
 
 typedef menuDef_t* (__cdecl * Menus_FindByName_t)(void* uiInfoArray, const char* name);
 
+typedef const char* (__cdecl * NET_AdrToString_t)(netadr_t adr);
+
 typedef void* (__cdecl * R_RegisterFont_t)(const char* asset, int);
 
 class GameEngine
@@ -790,10 +792,18 @@ public:
 	static DB_FindXAssetHeader_t DB_FindXAssetHeader;
 	static DB_LoadXAssets_t DB_LoadXAssets;
 
+	static dvar_t* Dvar_FindVar(char* name);
+
+	static char* GetStringConvar(char* key);
+
 	static Image_LoadFromFileWithReader_t Image_LoadFromFileWithReader;
 	static Image_Release_t Image_Release;
 
 	static Menus_FindByName_t Menus_FindByName;
+
+	static NET_AdrToString_t NET_AdrToString;
+	static void NET_OutOfBandPrint(int type, netadr_t adr, const char* message, ...);
+	static bool NET_StringToAdr(const char* address, netadr_t* adr);
 
 	static R_RegisterFont_t R_RegisterFont;
 };

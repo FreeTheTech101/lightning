@@ -11,7 +11,6 @@
 
 #include "StdInc.h"
 
-#if 0
 #include "NUI.h"
 #include <unordered_map>
 #include <queue>
@@ -91,7 +90,7 @@ void NUITask_Process(UITask* task)
 
 	if (!_stricmp(argument, "loadarenas"))
 	{
-		CefPostTask(TID_RENDERER, NewCefRunnableFunction(NUI_UpdateArenas));
+		//CefPostTask(TID_RENDERER, NewCefRunnableFunction(NUI_UpdateArenas));
 	}
 
 	g_nui.browser->GetMainFrame()->ExecuteJavaScript(va("CodeCallback_UITaskDone(%i);", task->taskID), "nui://game/native.js", 1);
@@ -118,7 +117,7 @@ void NUITask_Frame()
 typedef menuExpression_t* (__cdecl * UI_CompileExpression_t)(int handle, int maxTokens);
 UI_CompileExpression_t UI_CompileExpression = (UI_CompileExpression_t)0x413050;
 
-menuExpression_t* NUI_CompileExpression(const char* exp)
+/* menuExpression_t* NUI_CompileExpression(const char* exp)
 {
 	int handle = PC_LoadSourceString(exp);
 	menuExpression_t* retval = UI_CompileExpression(handle, 200);
@@ -126,19 +125,19 @@ menuExpression_t* NUI_CompileExpression(const char* exp)
 	PC_FreeSource(handle);
 
 	return retval;
-}
+} */
 
 typedef const char* (__cdecl * RunExpression_t)(int uiContext, menuExpression_t* expression);
-RunExpression_t RunExpression = (RunExpression_t)0x475360;
+RunExpression_t RunExpression = (RunExpression_t)0x53F820;
 
 extern bool _workaroundThreadSync;
 
 const char* NUI_RunExpression(menuExpression_t* exp)
 {
-	*(DWORD*)0x1CDE80C = GetCurrentThreadId();
+	*(DWORD*)0x14E89AC = GetCurrentThreadId();
 
 	_workaroundThreadSync = true;
-	const char* result = RunExpression(0x62E2858, exp);
+	const char* result = RunExpression(0xCAEE200, exp);
 	_workaroundThreadSync = false;
 
 	return result;
@@ -202,7 +201,7 @@ bool NUIExtensionHandler::Execute(const CefString& name, CefRefPtr<CefV8Value> o
 
 		_expressionCacheIt iter = _expressionCache.find(exp);
 
-		if (iter != _expressionCache.end())
+		/* if (iter != _expressionCache.end())
 		{
 			retval = CefV8Value::CreateString(NUI_RunExpression((*iter).second));
 		}
@@ -213,16 +212,16 @@ bool NUIExtensionHandler::Execute(const CefString& name, CefRefPtr<CefV8Value> o
 			_expressionCache[exp] = menuExp;
 
 			retval = CefV8Value::CreateString(NUI_RunExpression(menuExp));
-		}
+		} */
 
-		handled = true;
+		handled = false;
 	}
 	else if (name == "tableQuery")
 	{
 		std::list<CefRefPtr<CefV8Value>> results;
 
 		std::string tableName = arguments[0]->GetStringValue();
-		stringTable_t* table = (stringTable_t*)DB_FindXAssetHeader(ASSET_TYPE_STRINGTABLE, tableName.c_str());
+		stringTable_t* table = (stringTable_t*)GameEngine::DB_FindXAssetHeader(ASSET_TYPE_STRINGTABLE, tableName.c_str());
 
 		int columnNum = arguments[1]->GetIntValue();
 		std::string value = arguments[2]->GetStringValue();
@@ -281,9 +280,9 @@ bool NUIExtensionHandler::Execute(const CefString& name, CefRefPtr<CefV8Value> o
 		std::string addr = arguments[0]->GetStringValue();
 		netadr_t adr;
 
-		NET_StringToAdr(addr.c_str(), &adr);
+		GameEngine::NET_StringToAdr(addr.c_str(), &adr);
 
-		NET_OutOfBandPrint(NS_CLIENT, adr, "getstatus 0");
+		GameEngine::NET_OutOfBandPrint(NS_CLIENT, adr, "getstatus 0");
 
 		retval = CefV8Value::CreateNull();
 
@@ -360,7 +359,7 @@ void NUIExtensionHandler::InvokeNUICallback(const CefString& name, const CefV8Va
 	{
 		CefRefPtr<CefV8Exception> exception = retValue->GetException();
 
-		Com_Printf(0, va("CEF exception: %s at %s:%i\n", exception->GetMessageA().c_str(), exception->GetScriptResourceName().c_str(), exception->GetSourceLine()));
+		GameEngine::Com_Printf(0, va("CEF exception: %s at %s:%i\n", exception->GetMessageA().c_str(), exception->GetScriptResourceName().c_str(), exception->GetSourceLine()));
 	}
 
 	//_callbackContext->Exit();
@@ -402,4 +401,3 @@ void InvokeNUICallback(const CefString& name, const CefV8ValueList& arguments)
 		CefPostTask(TID_RENDERER, NewCefRunnableFunction(&InvokeNUICallbackInternal, name, arguments));
 	}
 }
-#endif

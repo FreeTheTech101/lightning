@@ -49,9 +49,69 @@ Com_Error_t GameEngine::Com_Error = (Com_Error_t)0x4FD330;
 DB_FindXAssetHeader_t GameEngine::DB_FindXAssetHeader = (DB_FindXAssetHeader_t)0x489570;
 DB_LoadXAssets_t GameEngine::DB_LoadXAssets = (DB_LoadXAssets_t)0x48A2B0;
 
+#pragma region Dvar_FindVar
+typedef dvar_t* (__cdecl * Dvar_FindVar_t)(void);
+Dvar_FindVar_t Dvar_FindVar_ = (Dvar_FindVar_t)0x4F9950;
+
+dvar_t* GameEngine::Dvar_FindVar(char* name)
+{
+	__asm mov edi, name;
+
+	return Dvar_FindVar_();
+}
+
+// get convar string
+char* GameEngine::GetStringConvar(char* key)
+{
+	dvar_t* var = GameEngine::Dvar_FindVar(key);
+
+	if (!var) return "";
+
+	return var->current.string;
+}
+
 Image_LoadFromFileWithReader_t GameEngine::Image_LoadFromFileWithReader = (Image_LoadFromFileWithReader_t)0x642380;
 Image_Release_t GameEngine::Image_Release = (Image_Release_t)0x6168E0;
 
 Menus_FindByName_t GameEngine::Menus_FindByName = (Menus_FindByName_t)0x54C230;
+
+NET_AdrToString_t GameEngine::NET_AdrToString = (NET_AdrToString_t)0x507990;
+
+#pragma region NET_OutOfBandPrint
+typedef void (__cdecl * sendOOB_t)(int, int, int, int, int, int, const char*);
+sendOOB_t OOBPrint = (sendOOB_t)0x508BF0;
+
+void OOBPrintT(int type, netadr_t netadr, const char* message)
+{
+	int* adr = (int*)&netadr;
+
+	OOBPrint(type, *adr, *(adr + 1), *(adr + 2), 0xFFFFFFFF, *(adr + 4), message);
+}
+
+void GameEngine::NET_OutOfBandPrint(int type, netadr_t adr, const char* message, ...)
+{
+	va_list args;
+	char buffer[65535];
+
+	va_start(args, message);
+	_vsnprintf(buffer, sizeof(buffer), message, args);
+	va_end(args);
+
+	OOBPrintT(type, adr, buffer);
+}
+#pragma endregion
+
+#pragma region NET_StringToAdr
+typedef bool (__cdecl * NET_StringToAdr_t)(netadr_t* adr);
+NET_StringToAdr_t NET_StringToAdr_ = (NET_StringToAdr_t)0x508F40;
+
+bool GameEngine::NET_StringToAdr(const char* address, netadr_t* adr)
+{
+	__asm mov eax, address;
+	__asm mov ecx, 0xFFFFFFFF;
+
+	NET_StringToAdr_(adr);
+}
+#pragma endregion
 
 R_RegisterFont_t GameEngine::R_RegisterFont = (R_RegisterFont_t)0x5F1EC0;

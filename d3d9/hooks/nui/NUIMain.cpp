@@ -12,8 +12,6 @@
 #include "StdInc.h"
 #include <MMSystem.h>
 
-#if 0
-
 #include "NUI.h"
 #include <d3d9.h>
 
@@ -24,7 +22,7 @@ extern int g_nuiHeight;
 static int g_roundedWidth;
 static int g_roundedHeight;
 
-GfxImage* g_nuiImage;
+GfxImage g_nuiImage;
 
 nui_s g_nui;
 
@@ -60,7 +58,7 @@ public:
 		std::string sourceStr = source.ToString();
 		std::string messageStr = message.ToString();
 
-		Com_Printf(0, "%s:%i, %s\n", sourceStr.c_str(), line, messageStr.c_str());
+		GameEngine::Com_Printf(0, "%s:%i, %s\n", sourceStr.c_str(), line, messageStr.c_str());
 
 		return false;
 	}
@@ -222,21 +220,21 @@ void NUI_CreateBrowser()
 	cef_string_utf16_set(L"GameData", 8, &cSettings.locales_dir_path, true);
 	cef_string_utf16_set(L"en-US", 5, &cSettings.locale, true);
 
-	CefInitialize(args, cSettings, app.get());
+	CefInitialize(args, cSettings, app.get(), nullptr);
 	CefRegisterSchemeHandlerFactory("nui", "game", new NUISchemeHandlerFactory());
 
 	CefRefPtr<CefClient> client(new NUIClient());
 
 	CefWindowInfo info;
-	info.SetAsOffScreen(GetDesktopWindow()); // ?!
-	info.SetTransparentPainting(true);
+	info.SetAsWindowless(GetDesktopWindow(), true);
 
 	CefBrowserSettings settings;
 
-	CefBrowserHost::CreateBrowser(info, client, "nui://game/index.html", settings);
-	//CefBrowserHost::CreateBrowser(info, client, "http://anthonycalzadilla.com/css3-ATAT/index.html", settings);
+	CefRefPtr<CefRequestContext> rc = CefRequestContext::GetGlobalContext();
+	//CefBrowserHost::CreateBrowser(info, client, "nui://game/index.html", settings, rc);
+	CefBrowserHost::CreateBrowser(info, client, "http://anthonycalzadilla.com/css3-ATAT/index.html", settings, rc);
 
-	call(0x6B8ABB, NUI_Shutdown, PATCH_CALL);
+	hook::call(0x6B8ABB, NUI_Shutdown);
 }
 
 /*
@@ -298,28 +296,6 @@ void NUI_ReloadPage_f()
 		g_nui.browser->GetMainFrame()->ExecuteJavaScript(va("CodeCallback_ReloadPage(\"%s\");", Cmd_Argv(1)), "nui://game/native.js", 1);
 	}
 }
-
-#pragma optimize("", off)
-void Image_Setup(GfxImage* image, short width, short height, short depth, unsigned int flags, int format)
-{
-	DWORD func = 0x6446F0; // 0x54AF50
-
-	__asm
-	{
-		push edi
-		mov eax, image
-		mov di, width
-		push format
-		push flags
-		push 0
-		push depth
-		push height
-		call func
-		add esp, 14h
-		pop edi
-	}
-}
-#pragma optimize("", on)
 
 Material* Material_Register(const char* filename);
 
@@ -392,18 +368,19 @@ void NUI_AddServerToList(netadr_t adr, const char* info)
 	static wchar_t wideInfo[8192];
 	MultiByteToWideChar(codepage, 0, info, -1, wideInfo, sizeof(wideInfo) / sizeof(wchar_t));
 
-	CefString adrString = NET_AdrToString(adr);
+	CefString adrString = GameEngine::NET_AdrToString(adr);
 	CefStringUTF16 infoString = wideInfo;
 	
 	CefPostTask(TID_RENDERER, NewCefRunnableFunction(&NUI_AddServerToList_, adrString, infoString));
 }
 
 char* Auth_GetUsername();
-Material* Material_Register(const char* filename)
+Material* Material_Register(const char* filename);
+void Image_Setup(GfxImage* image, short width, short height, short depth, unsigned int flags, int format);
 
 void NUI_Init()
 {
-	Com_Printf(0, "Initializing NUI...\n");
+	GameEngine::Com_Printf(0, "Initializing NUI...\n");
 
 	if (!g_nui.initialized)
 	{
@@ -411,8 +388,8 @@ void NUI_Init()
 
 		NUI_CreateBrowser();
 
-		Cmd_AddCommand("reload", NUI_Reload_f);
-		Cmd_AddCommand("reloadPage", NUI_ReloadPage_f);
+		GameEngine::Cmd_AddCommand("reload", NUI_Reload_f);
+		GameEngine::Cmd_AddCommand("reloadPage", NUI_ReloadPage_f);
 
 		NUITask_Init();
 		
@@ -424,7 +401,7 @@ void NUI_Init()
 	g_roundedHeight = roundUp(g_nuiHeight, 16);
 	g_roundedWidth = roundUp(g_nuiWidth, 16);
 
-	Com_Printf(0, "Created NUI texture (expected size %dx%d)\n", g_roundedWidth, g_roundedHeight);
+	GameEngine::Com_Printf(0, "Created NUI texture (expected size %dx%d)\n", g_roundedWidth, g_roundedHeight);
 
 	g_nui.material = Material_Register("nui");
 
@@ -531,7 +508,7 @@ UI_DrawHandlePic_t UI_DrawHandlePic = (UI_DrawHandlePic_t)0x4D0EA0;
 
 void NUI_Draw()
 {
-	float colorWhite[4];
+	/* float colorWhite[4];
 	colorWhite[0] = 1;
 	colorWhite[1] = 1;
 	colorWhite[2] = 1;
@@ -545,7 +522,7 @@ void NUI_Draw()
 	{
 		if (hasBeenColored)
 		{
-			R_AddCmdDrawStretchPic(0, 0, g_nuiWidth, g_nuiHeight, 0, 0, 1, 1, colorWhite, (Material*)DB_FindXAssetHeader(ASSET_TYPE_MATERIAL, "loadscreen_mp_estate_tropical"));
+			R_AddCmdDrawStretchPic(0, 0, g_nuiWidth, g_nuiHeight, 0, 0, 1, 1, colorWhite, (Material*)GameEngine::DB_FindXAssetHeader(ASSET_TYPE_MATERIAL, "loadscreen_mp_estate_tropical"));
 		}
 	}
 	else
@@ -577,61 +554,17 @@ void NUI_Draw()
 			}
 		}
 	}
+	*/
 }
-
-typedef void (__cdecl * SV_SpawnServer_t)(const char* map, bool dontLoadZone, bool migrating, bool cheats);
-SV_SpawnServer_t SV_SpawnServer = (SV_SpawnServer_t)0x4A7120;
-
-typedef bool (__cdecl * Sys_IsDatabaseReady_t)();
-Sys_IsDatabaseReady_t Sys_IsDatabaseReady = (Sys_IsDatabaseReady_t)0x4CA4A0;
-
-void CL_ConnectInstantly(netadr_t adr)
-{
-	*(DWORD*)0xB2C540 = 3; // client state
-	*(DWORD*)0xA1E878 = *(DWORD*)0x1CDE614; // net encoding key?
-
-	*(netadr_t*)0xA1E888 = adr;
-	*(int*)0xA1E89C = -99999;
-
-	*(DWORD*)0xA1E8A0 = 0; // connection attempts
-	*(DWORD*)0xB2C69C = 0; // timeout stuff?
-
-	// clear keycatchers
-	//*(DWORD*)0xB2C538 &= 1;
-}
-
-static dvar_t*& com_sv_running = *(dvar_t**)0x1AD7934;
 
 void NUI_Frame()
 {
-	if (Sys_IsDatabaseReady())
-	{
-		if (!strcmp(*(char**)0x1AA6480, "maps/mp/mp_ui_viewer.d3dbsp"))
-		//if (!strcmp(*(char**)0x1AA6480, "maps/mp/mp_bog_sh.d3dbsp"))
-		//if (DB_FindXAssetHeader(ASSET_TYPE_COL_MAP_MP, "maps/mp/mp_ui_viewer.d3dbsp") != nullptr) // is this even valid?
-		{
-			if (!com_sv_running->current.boolean)
-			{
-				netadr_t adr;
-				memset(&adr, 0, sizeof(adr));
-				adr.type = NA_LOOPBACK;
-
-				Dvar_SetCommand("xblive_privatematch", "1");
-				Dvar_SetCommand("g_gametype", "menu");
-
-				SV_SpawnServer("ui_viewer_mp", true, false, true);
-				//SV_SpawnServer("mp_bog_sh", true, false, true);
-				CL_ConnectInstantly(adr);
-			}
-		}
-	}
-
 	NUITask_Frame();
 
 	if (g_nui.browser)
 	{
-		float mouseX = *(float*)0x62E2868;
-		float mouseY = *(float*)0x62E286C;
+		float mouseX = *(float*)0xCAEE210;
+		float mouseY = *(float*)0xCAEE214;
 
 		if (mouseX != g_nui.lastX || mouseY != g_nui.lastY)
 		{
@@ -781,4 +714,3 @@ void NUI_UpdateArenas()
 
 	LeaveV8Context();
 }
-#endif

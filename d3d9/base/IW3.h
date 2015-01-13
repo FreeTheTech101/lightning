@@ -243,6 +243,19 @@ struct MaterialTechniqueSet
         MaterialTechnique* techniques[48];
 };
 
+typedef struct
+{
+	int type;
+	int id;
+	void* extraData;
+} menuExpToken_t;
+
+typedef struct
+{
+	int count;
+	menuExpToken_t* tokens;
+} menuExpression_t;
+
 enum netadrtype_t
 {
   NA_BOT = 0x0,
@@ -260,6 +273,11 @@ struct netadr_t
   unsigned __int16 port;
 };
 #pragma pack(pop)
+
+typedef enum {
+	NS_CLIENT,
+	NS_SERVER
+} netsrc_t;
 
 enum connstate_t
 {
