@@ -44,6 +44,6 @@ public:
 	static void nop(uintptr_t pAddress, DWORD size);
 	static void hook::patch(uintptr_t pAddress, DWORD data, DWORD iSize);
 	static void jump(uintptr_t pAddress, void* data);
-	static void call(uintptr_t pAddress, DWORD data);
+	static void call(uintptr_t pAddress, void* data);
 	static void charptr(uintptr_t pAddress, const char* pChar);
 };

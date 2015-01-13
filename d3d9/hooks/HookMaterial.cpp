@@ -78,7 +78,7 @@ GfxImage* Image_Alloc(const char* name, char a2, char a3, char a4)
 GfxImage* Image_Load(const char* name)
 {
 	GfxImage* image = Image_Alloc(name, 3, 0, 0);
-	Image_LoadFromFileWithReader(image, (_Reader_t)0x55C050);
+	GameEngine::Image_LoadFromFileWithReader(image, (_Reader_t)0x55C050);
 	return image;
 }
 
@@ -89,7 +89,7 @@ static void Material_InitializeStateMap()
 {
 	if (stateMapCopied) return;
 
-	Material* base = (Material*)DB_FindXAssetHeader(ASSET_TYPE_MATERIAL, "ui_cursor");
+	Material* base = (Material*)GameEngine::DB_FindXAssetHeader(ASSET_TYPE_MATERIAL, "ui_cursor");
 	memcpy(stateMapCopy, base->stateMap, 8);
 	stateMapCopied = true;
 }
@@ -117,7 +117,7 @@ Material* Material_CreateWithImage(const char* name, GfxImage* image)
 	material->unknownCount2 = 1;
 	material->unknown6 = 3;
 	material->unknown7 = 4;
-	material->techniqueSet = (MaterialTechniqueSet*)DB_FindXAssetHeader(ASSET_TYPE_TECHSET, "2d");
+	material->techniqueSet = (MaterialTechniqueSet*)GameEngine::DB_FindXAssetHeader(ASSET_TYPE_TECHNIQUE_SET, "2d");
 
 	material->maps->typeHash = R_HashString("colorMap");
 	material->maps->firstCharacter = 'c';
@@ -168,7 +168,7 @@ void Material_Delete(const char* name, const char* imageCondition)
 		{
 			if (!_stricmp(materialTable[name]->maps[0].image->name, imageCondition))
 			{
-				Image_Release(materialTable[name]->maps[0].image);
+				GameEngine::Image_Release(materialTable[name]->maps[0].image);
 				free(materialTable[name]->maps[0].image);
 				materialTable[name] = NULL;
 			}

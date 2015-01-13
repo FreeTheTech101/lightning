@@ -46,6 +46,7 @@ menuDef_t* LoadScreens_MessWithConnectMenu(menuDef_t* menu)
 
 void Material_Delete(const char* name, const char* imageCondition);
 Material* Material_Register(const char* filename);
+char* GetZonePath(const char* fileName);
 
 const char* LoadScreens_Filename()
 {
@@ -63,11 +64,11 @@ void LoadMapLoadscreenHookFunc(XZoneInfo* info, int a2, int a3)
 	if (FileExists(zonePath))
 	{
 		g_loadscreens.filename[0] = '\0';
-		DB_LoadXAssets(info, a2, a3);
+		GameEngine::DB_LoadXAssets(info, a2, a3);
 
 		if (g_loadscreens.connectBackgroundItem)
 		{
-			g_loadscreens.connectBackgroundItem->window.background = (Material*)DB_FindXAssetHeader(ASSET_TYPE_MATERIAL, "$levelbriefing");
+			g_loadscreens.connectBackgroundItem->window.background = (Material*)GameEngine::DB_FindXAssetHeader(ASSET_TYPE_MATERIAL, "$levelbriefing");
 		}
 	}
 	else
@@ -91,7 +92,7 @@ void LoadMapLoadscreenHookFunc(XZoneInfo* info, int a2, int a3)
 menuDef_t* GetConnectMenuHookFunc(assetType_t type, const char* connect)
 {
 	//return g_loadscreens.connectMenu;
-	return Menus_FindByName((void*)0xCAEE200, "connect");
+	return GameEngine::Menus_FindByName((void*)0xCAEE200, "connect");
 }
 
 static HookFunction hookFunction([] ()

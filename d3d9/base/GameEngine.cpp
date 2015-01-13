@@ -47,6 +47,7 @@ Com_PrintError_t GameEngine::Com_PrintError = (Com_PrintError_t)0x4FCC80;
 Com_Error_t GameEngine::Com_Error = (Com_Error_t)0x4FD330;
 
 DB_FindXAssetHeader_t GameEngine::DB_FindXAssetHeader = (DB_FindXAssetHeader_t)0x489570;
+DB_LoadXAssets_t GameEngine::DB_LoadXAssets = (DB_LoadXAssets_t)0x48A2B0;
 
 Image_LoadFromFileWithReader_t GameEngine::Image_LoadFromFileWithReader = (Image_LoadFromFileWithReader_t)0x642380;
 Image_Release_t GameEngine::Image_Release = (Image_Release_t)0x6168E0;

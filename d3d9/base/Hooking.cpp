@@ -122,7 +122,7 @@ void hook::jump(uintptr_t pAddress, void* data)
 	*(DWORD*)((DWORD)pAddress + 1) = (intptr_t)data - (DWORD)pAddress - 5;
 }
 
-void hook::call(uintptr_t pAddress, DWORD data)
+void hook::call(uintptr_t pAddress, void* data)
 {
 	*(BYTE*)pAddress = (BYTE)0xE8;
 	*(DWORD*)((DWORD)pAddress + 1) = (intptr_t)data - (DWORD)pAddress - 5;

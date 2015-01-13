@@ -1,5 +1,11 @@
 #pragma once
 
+struct XZoneInfo {
+	const char* name;
+	int type1;
+	int type2;
+};
+
 typedef enum assetType_e
 {
     ASSET_TYPE_XMODELPIECES = 0x0,
@@ -152,17 +158,7 @@ union GfxDrawSurf
     GFxDrawSurfFields fields;
     unsigned long long packed;
 };
- 
-struct __declspec(align(8)) MaterialInfo
-{
-    const char *name;
-    char gameFlags;
-    char sortKey;
-    char textureAtlasRowCount;
-    char textureAtlasColumnCount;
-    GfxDrawSurf drawSurf;
-    int surfaceTypeBits;
-};
+
 
 enum MaterialTechniqueType
 {
@@ -245,47 +241,6 @@ struct MaterialTechniqueSet
         char pad[4];
         MaterialTechniqueSet* remappedTechniqueSet;
         MaterialTechnique* techniques[48];
-};
- 
-struct Material
-{
-    MaterialInfo info;
-    char stateBitsEntry[TECHNIQUE_COUNT];   // see MaterialTechniqueType
-    char textureCount;
-    char constantCount;
-    char stateBitsCount;
-    char stateFlags;
-    char cameraRegion;
-    MaterialTechniqueSet *techniqueSet;
-    MaterialTextureDef *textureTable;
-    MaterialConstantDef *constantTable;
-    GfxStateBits *stateBitTable;
-};
-
-#pragma pack(push, 2)
-struct Glyph
-{
-  unsigned __int16 letter;
-  char x0;
-  char y0;
-  char dx;
-  char pixelWidth;
-  char pixelHeight;
-  float s0;
-  float t0;
-  float s1;
-  float t1;
-};
-#pragma pack(pop)
- 
-struct Font
-{
-  const char * name;
-  int pixelHeight;
-  int glyphCount;
-  Material * material;
-  Material * glowMaterial;
-  Glyph * glyphs;
 };
 
 enum netadrtype_t
@@ -402,6 +357,91 @@ typedef struct dvar_t
     dvar_maxmin_t min; //65:67
     dvar_maxmin_t max; //68:72 woooo
 } dvar_t;
+
+/* MaterialTextureDef->semantic */
+#define TS_2D		0x0
+#define TS_FUNCTION	0x1
+#define TS_COLOR_MAP	0x2
+#define TS_UNUSED_1	0x3
+#define TS_UNUSED_2	0x4
+#define TS_NORMAL_MAP	0x5
+#define TS_UNUSED_3	0x6
+#define TS_UNUSED_4	0x7
+#define TS_SPECULAR_MAP	0x8
+#define TS_UNUSED_5	0x9
+#define TS_UNUSED_6	0xA
+#define TS_WATER_MAP	0xB
+
+struct __declspec(align(8)) MaterialInfo
+{
+	const char *name;
+	char gameFlags;
+	char sortKey;
+	char textureAtlasRowCount;
+	char textureAtlasColumnCount;
+	GfxDrawSurf drawSurf;
+	int surfaceTypeBits;
+};
+
+struct MaterialStuff
+{
+	char unk;
+	char sortKey;
+};
+
+struct Material
+{
+	const char* name;
+	union
+	{
+		unsigned short flags; // 0x2F00 for instance
+		MaterialStuff sort;
+	};
+	unsigned char animationX; // amount of animation frames in X
+	unsigned char animationY; // amount of animation frames in Y
+	char unknown1[4]; // 0x00
+	unsigned int rendererIndex; // only for 3D models
+	char unknown9[4];
+	unsigned int surfaceTypeBits;
+	unsigned int unknown2; // 0xFFFFFFFF
+	unsigned int unknown3; // 0xFFFFFF00
+	char unknown4[40]; // 0xFF
+	char numMaps; // 0x01, possibly 'map count' (zone code confirms)
+	char unknown5; // 0x00
+	char unknownCount2; // 0x01, maybe map count actually
+	char unknown6; // 0x03
+	unsigned int unknown7; // 0x04
+	MaterialTechniqueSet* techniqueSet; // '2d' techset; +80
+	MaterialTextureDef* maps; // map references
+	unsigned int unknown8;
+	void* stateMap; // might be NULL, need to test
+};
+
+#pragma pack(push, 2)
+struct Glyph
+{
+	unsigned __int16 letter;
+	char x0;
+	char y0;
+	char dx;
+	char pixelWidth;
+	char pixelHeight;
+	float s0;
+	float t0;
+	float s1;
+	float t1;
+};
+#pragma pack(pop)
+
+struct Font
+{
+	const char * name;
+	int pixelHeight;
+	int glyphCount;
+	Material* material;
+	Material* glowMaterial;
+	Glyph * glyphs;
+};
 
 // original functions
 typedef dvar_t* (__cdecl * Dvar_RegisterBool_t)(const char* name, bool default, int flags, const char* description);
