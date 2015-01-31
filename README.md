@@ -1,5 +1,34 @@
 # Lightning
 
-[![Build Status](http://ci.twiz.re/buildStatus/icon?job=iw3cli)](http://ci.twiz.re/job/iw3cli/)
-
 A client/server side modification for Call of Duty 4.
+
+## Build instructions
+
+### Build requirements
+
+* Git
+* Microsoft Visual Studio 2013
+
+### Clone the repository
+
+```
+git clone https://github.com/twizre/lightning.git
+cd lightning
+```
+
+### Set up premake
+
+1. Download the latest premake nightly build from [here](http://www.mirrorservice.org/sites/ftp.sourceforge.net/pub/sourceforge/p/pr/premake/Premake/nightlies/premake-dev-windows.zip).
+2. Extract `premake5.exe` to the directory you cloned this repository to.
+
+### Generate the project files
+
+```
+cd lightning
+premake5 vs2013
+```
+
+### Build the project
+
+1. Open the project folder and open `iw3cli.sln`.
+2. Build the project using Visual Studio 2013.
