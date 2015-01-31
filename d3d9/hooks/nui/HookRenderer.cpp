@@ -79,8 +79,8 @@ void __declspec(naked) FS_GetHandleHookStub()
 
 static HookFunction hookFunction([]()
 {
-	initNUIHook.initialize(initNUIHookLoc, InitNUIHookStub);
-	initNUIHook.installHook();
+	//initNUIHook.initialize(initNUIHookLoc, InitNUIHookStub);
+	//initNUIHook.installHook();
 
-	hook::call(0x55AED0, FS_GetHandleHookStub);
+	//hook::call(0x55AED0, FS_GetHandleHookStub);
 });

@@ -182,7 +182,7 @@ GfxImage* g_nuiImage;
 
 Material* Material_Register(const char* filename)
 {
-	if (!_stricmp(filename, "nui"))
+	/* if (!_stricmp(filename, "nui"))
 	{
 		return Material_ObtainImage(filename, g_nuiImage);
 	}
@@ -193,7 +193,7 @@ Material* Material_Register(const char* filename)
 		{
 			return Material_Obtain("$levelbriefingX", LoadScreens_Filename());
 		}
-	}
+	} */
 
 	if (!_stricmp(filename, "codfont"))
 	{
@@ -231,7 +231,7 @@ static HookFunction hookFunction([] ()
 {
 	materialTable.set_empty_key("");
 
-	hook::jump(0x5F2A90, Material_RegisterHandleHook);
+	//hook::jump(0x5F2A90, Material_RegisterHandleHook);
 
 	GameEngine::Cmd_AddCommand("materialTableDebug", Material_TableDebug_f);
 });

@@ -10,7 +10,7 @@
 // ==========================================================
 
 #include "StdInc.h"
-
+/*
 char* GetZonePath(const char* fileName);
 
 static struct
@@ -93,14 +93,14 @@ menuDef_t* GetConnectMenuHookFunc(assetType_t type, const char* connect)
 {
 	//return g_loadscreens.connectMenu;
 	return GameEngine::Menus_FindByName((void*)0xCAEE200, "connect");
-}
+} */
 
 static HookFunction hookFunction([] ()
 {
 	// first call is probably 0x46A49C as its parent function
 	// contains a call to DB_LoadXAsset, %s_load and mapname
-	hook::call(0x46A49C, LoadMapLoadscreenHookFunc);
-	hook::call(0x46A890, LoadMapLoadscreenHookFunc);
+	//hook::call(0x46A49C, LoadMapLoadscreenHookFunc);
+	//hook::call(0x46A890, LoadMapLoadscreenHookFunc);
 
-	hook::call(0x54421C, GetConnectMenuHookFunc);
+	//hook::call(0x54421C, GetConnectMenuHookFunc);
 });
