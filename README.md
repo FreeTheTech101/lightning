@@ -16,9 +16,9 @@ git clone https://github.com/twizre/lightning.git
 cd lightning
 ```
 
-### Set up premake
+### Set up Premake
 
-1. Download the latest premake nightly build from [here](http://www.mirrorservice.org/sites/ftp.sourceforge.net/pub/sourceforge/p/pr/premake/Premake/nightlies/premake-dev-windows.zip).
+1. Download the latest Premake nightly build from [here](http://www.mirrorservice.org/sites/ftp.sourceforge.net/pub/sourceforge/p/pr/premake/Premake/nightlies/premake-dev-windows.zip).
 2. Extract `premake5.exe` to the directory you cloned this repository to.
 
 ### Generate the project files
