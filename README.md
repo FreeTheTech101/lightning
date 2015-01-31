@@ -4,7 +4,7 @@ A client/server side modification for Call of Duty 4.
 
 ## Build instructions
 
-### Build requirements
+### Requirements
 
 * Git
 * Microsoft Visual Studio 2013
