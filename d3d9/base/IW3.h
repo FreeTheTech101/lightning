@@ -1,6 +1,7 @@
 #pragma once
 
-struct XZoneInfo {
+struct XZoneInfo
+{
 	const char* name;
 	int type1;
 	int type2;
