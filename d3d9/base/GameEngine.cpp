@@ -17,23 +17,25 @@ void GameEngine::CG_GameMessage(char* text)
 #pragma region Cmd_AddCommand
 cmd_function_t** cmd_functions = (cmd_function_t**)0x1410B3C;
 
-typedef int (__cdecl * Cmd_AddCommand_t)(const char* name);
-Cmd_AddCommand_t Cmd_AddCommand_ = (Cmd_AddCommand_t)0x4F9950;
+typedef int (__cdecl * Cmd_FindCommand_t)(const char* name);
+Cmd_FindCommand_t Cmd_FindCommand = (Cmd_FindCommand_t)0x4F9950;
 
-void GameEngine::Cmd_AddCommand(const char* name, CommandCB_t function)
+void GameEngine::Cmd_AddCommand(const char *cmd_name, CommandCB_t function)
 {
-	if (Cmd_AddCommand_(name))
+	cmd_function_t *cmd;
+	
+	if (Cmd_FindCommand(cmd_name))
 	{
 		if (function != NULL)
 		{
-			GameEngine::Com_Printf(16, "Cmd_AddCommand: %s already defined\n", name);
+			GameEngine::Com_Printf(16, "Cmd_AddCommand: %s already defined\n", cmd_name);
 		}
 
 		return;
 	}
 
-	cmd_function_t *cmd = (cmd_function_t*)malloc(sizeof(struct cmd_function_s));
-	cmd->name = name;
+	cmd = (cmd_function_t*)malloc(sizeof(struct cmd_function_s));
+	cmd->name = cmd_name;
 	cmd->function = function;
 	cmd->next = *cmd_functions;
 	*cmd_functions = cmd;
